@@ -74,10 +74,17 @@ npm run generate:manifest
 | 参数 | 说明 |
 | :--- | :--- |
 | `type` | (可选) `h`=横屏, `v`=竖屏。不传则根据 User-Agent 自动判断。 |
+| `redirect` | (可选) `true`=返回 302 重定向到图片地址；不传或 `false`=直接返回图片内容 (Proxy 模式)。 |
 
 **示例**：
 ```html
-<!-- 自动适应 -->
+<!-- 直接返回图片内容 (推荐，浏览器地址栏不改变) -->
+<img src="https://api.your-site.com/random" />
+<img src="https://api.your-site.com/random?type=v" />
+
+<!-- 302 重定向到实际地址 (旧版行为) -->
+<img src="https://api.your-site.com/random?redirect=true" />
+```
 <img src="https://api.your-site.com/random" />
 
 <!-- 强制竖屏 -->

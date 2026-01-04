@@ -4,344 +4,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>随机图床管理后台</title>
+    <title>EdgeOne Random Photo Admin</title>
     <style>
         :root {
-            --primary-color: #006eff;
-            --bg-color: #f5f7fa;
-            --card-bg: #ffffff;
-            --text-color: #1a202c;
-            --border-color: #e2e8f0;
+            --primary: #007aff;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-main: #1d1d1f;
+            --text-sec: #86868b;
+            --danger: #ff3b30;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --glass-bg: rgba(0, 0, 0, 0.6);
+                --glass-border: rgba(255, 255, 255, 0.1);
+                --text-main: #f5f5f7;
+                --text-sec: #a1a1a6;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            color: var(--text-main);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+            }
         }
 
         .container {
-            width: 100%;
-            max-width: 500px;
-            padding: 2rem;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
         h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
+            font-size: 24px;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             text-align: center;
-            width: 100%;
-            box-sizing: border-box;
+            letter-spacing: -0.5px;
         }
 
-        .status-kv {
-            background-color: #def7ec;
-            color: #03543f;
-        }
-
-        .status-env {
-            background-color: #fefcbf;
-            color: #744210;
-        }
-
-        .form-group {
+        .input-group {
             margin-bottom: 1.5rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            font-size: 13px;
             font-weight: 500;
+            color: var(--text-sec);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         input[type="text"],
+        input[type="password"],
+        input[type="number"],
         textarea {
             width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
+            padding: 12px 16px;
+            border: 1px solid transparent;
+            background: rgba(120, 120, 128, 0.1);
+            border-radius: 12px;
+            font-size: 16px;
+            color: var(--text-main);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            background: rgba(120, 120, 128, 0.15);
+            box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
         }
 
         textarea {
-            height: 100px;
             resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
         }
 
-        .toggle-switch {
+        .switch-row {
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+            margin-bottom: 1.5rem;
         }
 
-        .toggle-input {
-            display: none;
+        .switch-label {
+            display: flex;
+            flex-direction: column;
         }
 
-        .toggle-label {
+        .switch-desc {
+            font-size: 12px;
+            color: var(--text-sec);
+            font-weight: 400;
+            margin-top: 2px;
+            text-transform: none;
+        }
+
+        /* iOS Style Toggle Switch */
+        .toggle-switch {
             position: relative;
-            display: inline-block;
-            width: 48px;
-            height: 24px;
-            background-color: #cbd5e0;
-            border-radius: 9999px;
-            transition: background-color 0.2s;
+            width: 50px;
+            height: 30px;
+            appearance: none;
+            background: rgba(120, 120, 128, 0.2);
+            border-radius: 15px;
+            transition: 0.3s;
             cursor: pointer;
+            outline: none;
         }
 
-        .toggle-label::after {
+        .toggle-switch::after {
             content: '';
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
+            width: 26px;
+            height: 26px;
+            background: white;
             border-radius: 50%;
-            transition: transform 0.2s;
+            transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
-        .toggle-input:checked+.toggle-label {
-            background-color: var(--primary-color);
+        .toggle-switch:checked {
+            background: var(--primary);
         }
 
-        .toggle-input:checked+.toggle-label::after {
-            transform: translateX(24px);
+        .toggle-switch:checked::after {
+            transform: translateX(20px);
         }
 
-        button {
+        .btn {
             width: 100%;
-            padding: 0.75rem;
-            background-color: var(--primary-color);
-            color: white;
+            padding: 14px;
             border: none;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 14px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: transform 0.1s, opacity 0.2s;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .btn:active {
+            transform: scale(0.98);
         }
 
-        button:disabled {
-            background-color: #cbd5e0;
-            cursor: not-allowed;
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
         }
 
-        #login-screen {
-            display: flex;
-            /* Initially hidden conditionally via JS, but we'll manage with classes */
+        .btn-primary:hover {
+            opacity: 0.9;
         }
 
         .hidden {
-            display: none !important;
+            display: none;
+            opacity: 0;
         }
 
-        .error-msg {
-            color: #e53e3e;
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
+        .fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #message {
+            margin-top: 1rem;
             text-align: center;
+            font-size: 14px;
+            min-height: 20px;
+        }
+
+        .success {
+            color: #34c759;
+        }
+
+        .error {
+            color: var(--danger);
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(120, 120, 128, 0.1);
+            color: var(--text-sec);
+            margin-left: 8px;
+            text-transform: uppercase;
         }
     </style>
 </head>
 
 <body>
 
-    <div class="container">
-        <!-- Login Screen -->
-        <div id="login-screen" class="card">
-            <h1>管理员登录</h1>
-            <div class="form-group">
-                <input type="password" id="password-input" placeholder="请输入 ADMIN_PASSWORD"
-                    onkeydown="if(event.key==='Enter') login()">
+    <div class="container" id="login-section">
+        <h1>Admin Login</h1>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter admin password">
+        </div>
+        <button class="btn btn-primary" onclick="login()">Sign In</button>
+        <div id="login-msg" class="error" style="text-align:center; margin-top:10px;"></div>
+    </div>
+
+    <div class="container hidden" id="dashboard-section">
+        <h1>Dashboard <span id="source-badge" class="badge">Checking...</span></h1>
+
+        <div class="switch-row">
+            <div class="switch-label">
+                <span style="color:var(--text-main)">Global Public Access</span>
+                <span class="switch-desc">Allow anyone to access images without restrictions</span>
             </div>
-            <button onclick="login()">登录</button>
-            <p id="login-error" class="error-msg hidden">密码错误或连接失败</p>
+            <input type="checkbox" id="public-access" class="toggle-switch">
         </div>
 
-        <!-- Dashboard -->
-        <div id="dashboard" class="card hidden">
-            <h1>图床配置</h1>
-            <div id="status-badge" class="status-badge status-env">
-                检测配置模式...
-            </div>
-
-            <div class="form-group toggle-switch">
-                <label for="ddos-mode">🛡️ DDoS 防御模式 (Micro-caching)</label>
-                <div>
-                    <input type="checkbox" id="ddos-mode" class="toggle-input">
-                    <label for="ddos-mode" class="toggle-label"></label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="cache-timeout">DDoS 缓存时间 (秒): <span id="cache-timeout-val">5</span></label>
-                <input type="range" id="cache-timeout" min="1" max="60" value="5">
-            </div>
-
-            <div class="form-group toggle-switch">
-                <label for="public-access">公开访问 (Public Mode)</label>
-                <div>
-                    <input type="checkbox" id="public-access" class="toggle-input">
-                    <label for="public-access" class="toggle-label"></label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="whitelist">Referer 白名单 (逗号分隔)</label>
-                <textarea id="whitelist" placeholder="example.com, myblog.com" style="height: 60px;"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="public-images">公开图片白名单 (文件名, 逗号分隔)</label>
-                <textarea id="public-images" placeholder="banner.jpg, welcome.png" style="height: 60px;"></textarea>
-                <small style="color: #718096; font-size: 0.8rem;">在此列表中的图片可以被任何网站直接引用 (绕过防盗链)</small>
-            </div>
-
-            <button id="save-btn" onclick="saveConfig()">保存配置</button>
-            <p id="save-msg" class="error-msg hidden" style="color: green; margin-top: 10px;">保存成功!</p>
+        <div class="input-group">
+            <label>Whitelist Domains <span style="text-transform:none;opacity:0.6">(Comma separated)</span></label>
+            <input type="text" id="whitelist" placeholder="example.com, blog.me">
         </div>
+
+        <div class="input-group">
+            <label>Public Images <span style="text-transform:none;opacity:0.6">(One filename per comma)</span></label>
+            <textarea id="public-images" placeholder="banner.jpg, logo.png" style="min-height: 80px;"></textarea>
+            <div style="font-size:12px;color:var(--text-sec);margin-top:4px">These images bypass hotlink protection.
+            </div>
+        </div>
+
+        <div class="switch-row">
+            <div class="switch-label">
+                <span style="color:var(--text-main)">DDoS Defense Mode</span>
+                <span class="switch-desc">Enable edge caching and strict referer checks</span>
+            </div>
+            <input type="checkbox" id="ddos-mode" class="toggle-switch">
+        </div>
+
+        <div class="input-group" id="cache-group">
+            <label>DDoS Cache Timeout (Seconds)</label>
+            <input type="number" id="ddos-cache" value="5" min="1" max="60">
+        </div>
+
+        <button class="btn btn-primary" onclick="saveConfig()" id="save-btn">Save Changes</button>
+        <div id="message"></div>
     </div>
 
     <script>
         let authToken = '';
 
         async function login() {
-            const password = document.getElementById('password-input').value;
-            if (!password) return;
+            const pwd = document.getElementById('password').value;
+            if (!pwd) return;
 
-            // Try to fetch config to verify password
+            // Basic "Auth" for demo - using the password itself as token
+            authToken = 'Bearer ' + pwd;
+
+            const btn = document.querySelector('#login-section .btn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Verifying...';
+            btn.classList.add('loading');
+
             try {
                 const res = await fetch('/api/admin', {
-                    headers: { 'Authorization': 'Bearer ' + password }
+                    headers: { 'Authorization': authToken }
                 });
 
-                if (res.status === 200) {
-                    authToken = password;
+                if (res.ok) {
                     const config = await res.json();
                     showDashboard(config);
                 } else {
-                    showError('密码错误 (Status: ' + res.status + ')');
+                    document.getElementById('login-msg').innerText = 'Invalid Password';
+                    authToken = '';
                 }
             } catch (e) {
-                showError('连接失败: ' + e.message);
+                document.getElementById('login-msg').innerText = 'Network Error';
+            } finally {
+                btn.innerText = originalText;
+                btn.classList.remove('loading');
             }
-        }
-
-        function showError(msg) {
-            const el = document.getElementById('login-error');
-            el.textContent = msg;
-            el.classList.remove('hidden');
         }
 
         function showDashboard(config) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
+            document.getElementById('login-section').classList.add('hidden');
+            const dash = document.getElementById('dashboard-section');
+            dash.classList.remove('hidden');
+            dash.classList.add('fade-in');
 
-            const isKV = config.source === 'KV';
-            const statusEl = document.getElementById('status-badge');
-            const saveBtn = document.getElementById('save-btn');
-            const inputs = [
-                document.getElementById('public-access'),
-                document.getElementById('whitelist'),
-                document.getElementById('ddos-mode'),
-                document.getElementById('cache-timeout'),
-                document.getElementById('public-images')
-            ];
-
-            if (isKV) {
-                statusEl.textContent = '当前模式: KV Storage (可读写)';
-                statusEl.className = 'status-badge status-kv';
-                saveBtn.disabled = false;
-                inputs.forEach(el => el.disabled = false);
-            } else {
-                statusEl.textContent = '当前模式: 环境变量 (只读)';
-                statusEl.className = 'status-badge status-env';
-                saveBtn.textContent = '只读模式 (无法修改)';
-                saveBtn.disabled = true;
-                inputs.forEach(el => el.disabled = true);
-            }
-
-            // Populate Form
+            // Populate Fields
             document.getElementById('public-access').checked = config.publicAccess;
             document.getElementById('whitelist').value = config.whitelist.join(', ');
             document.getElementById('ddos-mode').checked = config.ddosMode;
-            document.getElementById('cache-timeout').value = config.ddosCacheTimeout;
-            document.getElementById('cache-timeout-val').textContent = config.ddosCacheTimeout;
-            document.getElementById('public-images').value = config.publicImages.join(', ');
+            document.getElementById('ddos-cache').value = config.ddosCacheTimeout;
+            document.getElementById('public-images').value = (config.publicImages || []).join(', ');
 
-            // Slider listener
-            document.getElementById('cache-timeout').addEventListener('input', (e) => {
-                document.getElementById('cache-timeout-val').textContent = e.target.value;
-            });
+            // Badge
+            const badge = document.getElementById('source-badge');
+            badge.innerText = config.source + ' Mode';
+
+            // Read-Only Handling
+            if (config.source === 'ENV') {
+                const elements = document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button');
+                elements.forEach(el => el.disabled = true);
+                document.getElementById('message').innerText = '🔒 Read-Only Configuration (Environment Variables)';
+                document.getElementById('message').style.color = 'var(--text-sec)';
+            }
         }
 
         async function saveConfig() {
+            const btn = document.getElementById('save-btn');
+            btn.innerText = 'Saving...';
+            btn.classList.add('loading');
+
             const publicAccess = document.getElementById('public-access').checked;
             const whitelistStr = document.getElementById('whitelist').value;
             const whitelist = whitelistStr.split(',').map(s => s.trim()).filter(s => s);
+
             const ddosMode = document.getElementById('ddos-mode').checked;
-            const ddosCacheTimeout = parseInt(document.getElementById('cache-timeout').value, 10);
+            const ddosCacheTimeout = parseInt(document.getElementById('ddos-cache').value);
 
             const publicImagesStr = document.getElementById('public-images').value;
             const publicImages = publicImagesStr.split(',').map(s => s.trim()).filter(s => s);
-
-            const saveBtn = document.getElementById('save-btn');
-            saveBtn.disabled = true;
-            saveBtn.textContent = '保存中...';
 
             try {
                 const res = await fetch('/api/admin', {
                     method: 'POST',
                     headers: {
-                        'Authorization': 'Bearer ' + authToken,
+                        'Authorization': authToken,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({ publicAccess, whitelist, ddosMode, ddosCacheTimeout, publicImages })
                 });
 
                 if (res.ok) {
-                    const msg = document.getElementById('save-msg');
-                    msg.classList.remove('hidden');
-                    msg.textContent = '保存成功!';
-                    setTimeout(() => msg.classList.add('hidden'), 3000);
+                    showMessage('Configuration Saved Successfully!', 'success');
                 } else {
-                    alert('保存失败: ' + await res.text());
+                    const msg = await res.text();
+                    showMessage('Failed: ' + msg, 'error');
                 }
             } catch (e) {
-                alert('保存错误: ' + e.message);
+                showMessage('Network Error: ' + e.message, 'error');
             } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = '保存配置';
+                btn.innerText = 'Save Changes';
+                btn.classList.remove('loading');
             }
         }
+
+        function showMessage(msg, type) {
+            const el = document.getElementById('message');
+            el.innerText = msg;
+            el.className = type;
+            setTimeout(() => {
+                el.innerText = '';
+                el.className = '';
+            }, 3000);
+        }
+
+        // Enter key for login
+        document.getElementById('password').addEventListener('keyup', function (event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        });
     </script>
 </body>
 

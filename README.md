@@ -76,11 +76,17 @@ Add these variables in EdgeOne Pages settings:
 | Param | Description |
 | :--- | :--- |
 | `type` | (Optional) `h`=Horizontal, `v`=Vertical. Auto-detects if omitted. |
+| `redirect` | (Optional) `true`=Returns 302 Redirect; Omitted or `false`=Returns Image Content directly (Proxy Mode). |
 
 **Example**:
 ```html
-<!-- Adaptive -->
+<!-- Direct Image Return (Recommended, URL stays /random) -->
 <img src="https://api.your-site.com/random" />
+<img src="https://api.your-site.com/random?type=v" />
+
+<!-- 302 Redirect to actual path (Legacy behavior) -->
+<img src="https://api.your-site.com/random?redirect=true" />
+```
 
 <!-- Force Vertical -->
 <img src="https://api.your-site.com/random?type=v" />

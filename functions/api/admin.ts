@@ -1,4 +1,4 @@
-import { getConfig, saveConfig } from '../utils/config';
+import { getConfig, saveConfig, type Config } from '../utils/config';
 
 export const onRequest: PagesFunction<Env> = async (context) => {
     const { request, env } = context;
@@ -30,7 +30,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
         }
 
         try {
-            const body = await request.json();
+            const body = await request.json() as Partial<Config>;
             const success = await saveConfig(env, body);
             if (success) {
                 return new Response(JSON.stringify({ success: true }), { headers: { 'Content-Type': 'application/json' } });

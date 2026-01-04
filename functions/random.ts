@@ -42,20 +42,62 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const randomImage = images[Math.floor(Math.random() * images.length)];
     const redirectUrl = new URL(randomImage, url.origin).toString();
 
-    // 5. Redirect & Cache Headers
+    // 5. Response Strategy (Hybrid)
+    // Goal: Browser address bar stays /random (Proxy), but <img> tags get 302 (Better Caching/Performance)
+
+    const accept = request.headers.get('Accept') || '';
+    // Browsers navigating to a page send 'text/html'
+    // <img> tags send 'image/*', '*/*', but NOT 'text/html'
+    const isBrowserNav = accept.includes('text/html');
+
+    // Query param overrides everything: ?redirect=true or ?redirect=false
+    const paramRedirect = url.searchParams.get('redirect');
+
+    let shouldRedirect = false;
+
+    if (paramRedirect === 'true') {
+        shouldRedirect = true;
+    } else if (paramRedirect === 'false') {
+        shouldRedirect = false;
+    } else {
+        // Default behavior if no param:
+        // If it's a browser navigation, Stay (Proxy 200).
+        // If it's an image tag/api call, Jump (Redirect 302).
+        shouldRedirect = !isBrowserNav;
+    }
+
+    // Headers construction
     const headers = new Headers();
-    headers.set('Location', redirectUrl);
 
     if (config.ddosMode) {
-        // Cache the 302 Redirect at Edge for 'ddosCacheTimeout' seconds
-        // 'public' allows shared cache (CDN), 's-maxage' controls CDN cache time
+        // Cache at Edge (Both 302 and 200 body can be cached)
         headers.set('Cache-Control', `public, s-maxage=${config.ddosCacheTimeout}, max-age=${config.ddosCacheTimeout}`);
         headers.set('X-DDoS-Protection', 'Active');
     } else {
-        // No caching for maximum randomness
         headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         headers.set('X-DDoS-Protection', 'Inactive');
     }
 
-    return new Response(null, { status: 302, headers });
+    if (shouldRedirect) {
+        headers.set('Location', redirectUrl);
+        return new Response(null, { status: 302, headers });
+    } else {
+        // Proxy Mode
+        try {
+            const imageResponse = await fetch(redirectUrl);
+
+            // Forward Content-Type
+            const contentType = imageResponse.headers.get('Content-Type');
+            if (contentType) headers.set('Content-Type', contentType);
+
+            // Forward ETag
+            const etag = imageResponse.headers.get('ETag');
+            if (etag) headers.set('ETag', etag);
+
+            return new Response(imageResponse.body, { status: 200, headers });
+        } catch (e) {
+            console.error('Proxy fetch failed:', e);
+            return new Response('Failed to fetch image', { status: 502 });
+        }
+    }
 };
