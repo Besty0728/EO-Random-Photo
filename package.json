@@ -1,0 +1,16 @@
+{
+    "name": "eo-random-photo",
+    "version": "1.0.0",
+    "description": "Random Photo API for Tencent Cloud EdgeOne Pages",
+    "type": "module",
+    "scripts": {
+        "generate:manifest": "node scripts/generate-manifest.js",
+        "build": "npm run generate:manifest",
+        "dev": "npm run generate:manifest && npx wrangler pages dev public"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "@types/node": "^20.0.0",
+        "wrangler": "^3.0.0"
+    }
+}

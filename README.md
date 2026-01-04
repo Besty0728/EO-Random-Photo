@@ -1,0 +1,129 @@
+# 🖼️ EdgeOne Random Photo API
+
+[![Deploy to EdgeOne Pages](https://img.shields.io/badge/Deploy%20to-EdgeOne%20Pages-blue?style=for-the-badge&logo=tencent-cloud)](https://edgeone.ai/)
+
+[简体中文](./README_ZH.md) | [English](./README.md)
+
+A high-performance, secure, and customizable Random Photo API built on **Tencent Cloud EdgeOne Pages**.
+
+✨ **Key Features**:
+*   **🚀 Edge Computing**: Powered by Edge Functions for millisecond-level response times.
+*   **📱 Adaptive Design**: Automatically serves vertical or horizontal wallpapers based on the user's device.
+*   **🔒 Smart Hotlink Protection**:
+    *   **Global Protection**: Protects both the API and static image resources.
+    *   **Whitelist**: Only authorized domains can access your resources.
+    *   **Public Images**: designate specific images as "Public" for universal access.
+*   **🛡️ DDoS Defense Mode**: Enables micro-caching on CDN nodes to withstand high-concurrency attacks (10k+ QPS).
+*   **⚙️ Hybrid Configuration**:
+    *   **KV Mode**: Real-time configuration updates via a visual admin panel.
+    *   **Env Mode**: Read-only configuration via Environment Variables (for users without KV).
+*   **📊 Visual Dashboard**: Built-in minimalist admin panel for easy management.
+
+---
+
+## 🛠️ Quick Deployment
+
+### 1. Prepare Images
+Upload your wallpapers to the repository:
+*   Vertical images: `public/images/vertical/`
+*   Horizontal images: `public/images/horizontal/`
+
+### 2. Generate Manifest
+Before committing, run the script to generate the image index:
+```bash
+npm run generate:manifest
+```
+> **Note**: Ensure `functions/data/manifest.json` is included in your Git commit.
+
+### 3. Deploy to EdgeOne Pages
+1.  Go to [EdgeOne Pages Console](https://console.cloud.tencent.com/edgeone/pages).
+2.  Create a new project and connect your Git repository.
+3.  **Build Settings**:
+    *   Build Command: `npm run generate:manifest` (or `npm run build`)
+    *   Output Directory: `public`
+4.  Click **Deploy**.
+
+---
+
+## ⚙️ Configuration
+
+You can configure the project using **Environment Variables** (ReadOnly) or **KV Storage** (Read/Write). KV is preferred. If KV is missing, it falls back to Env Vars.
+
+### Method A: Environment Variables (Read-Only)
+Add these variables in EdgeOne Pages settings:
+
+| Variable | Type | Example | Description |
+| :--- | :--- | :--- | :--- |
+| `ADMIN_PASSWORD` | String | `mypassword` | **[Required]** Admin panel password |
+| `EO_PUBLIC_ACCESS` | Boolean | `false` | Allow global public access (Default: false) |
+| `EO_WHITELIST` | String | `example.com,blog.me` | Allowed domains (comma separated) |
+| `EO_DDOS_MODE` | Boolean | `false` | Enable DDoS Defense Mode |
+| `EO_CACHE_TIMEOUT` | Number | `5` | Cache duration in seconds for DDoS Mode |
+| `EO_PUBLIC_IMAGES` | String | `banner.jpg,logo.png` | **Public Images List**. These files bypass hotlink protection. |
+
+### Method B: KV Storage (Read/Write)
+1.  Create a KV Namespace named `EO_KV` in the console.
+2.  Bind it to `EO_KV` in Pages Settings -> **Functions Binding**.
+3.  Access `https://your-domain/admin/index.html` to manage settings online.
+
+---
+
+## 🔌 API Usage
+
+### 1. Get Random Image
+**Endpoint**: `/random`
+
+| Param | Description |
+| :--- | :--- |
+| `type` | (Optional) `h`=Horizontal, `v`=Vertical. Auto-detects if omitted. |
+
+**Example**:
+```html
+<!-- Adaptive -->
+<img src="https://api.your-site.com/random" />
+
+<!-- Force Vertical -->
+<img src="https://api.your-site.com/random?type=v" />
+```
+
+### 2. Access Specific Public Image
+If `banner.jpg` is in your `EO_PUBLIC_IMAGES` whitelist:
+
+```html
+<img src="https://api.your-site.com/images/horizontal/banner.jpg" />
+```
+*Note: Images not in the whitelist will return 403 Forbidden if accessed directly from an unauthorized domain.*
+
+---
+
+## 🛡️ Security Policies
+
+### Hotlink Protection
+Intercepts requests from non-whitelisted domains.
+*   **Exception 1**: `EO_PUBLIC_ACCESS=true` (Global Public).
+*   **Exception 2**: The requested file is in `EO_PUBLIC_IMAGES`.
+
+### DDoS Defense Mode
+When enabled:
+1.  **Micro-Caching**: API responses include `s-maxage=5`, causing the CDN to cache the redirect. All users see the same image for 5 seconds, reducing origin load.
+2.  **Strict Check**: Requests must have a valid Referer (unless it is a Public Image request).
+
+---
+
+## 📂 Project Structure
+```
+├── functions/
+│   ├── _middleware.ts    # Global Access Control
+│   ├── api/
+│   │   ├── random.ts     # Random Image Logic
+│   │   └── admin.ts      # Admin API
+│   └── utils/config.ts   # Config Loader
+├── public/
+│   ├── admin/            # Admin Dashboard
+│   └── images/           # Image Assets
+├── scripts/              # Build Scripts
+└── package.json
+```
+
+---
+Powered by Tencent Cloud EdgeOne Pages
