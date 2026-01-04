@@ -6,7 +6,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     const url = new URL(request.url);
 
     // 1. Get Configuration
-    constconfig = await getConfig(env);
+    const config = await getConfig(env);
 
     // 3. Determine Image Type (Horizontal/Vertical)
     // Access control is handled by _middleware.ts
