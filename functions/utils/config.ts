@@ -19,7 +19,7 @@ const DEFAULT_CONFIG: Config = {
 
 export async function getConfig(env: Env): Promise<Config> {
     // 1. Try KV
-    if (env.CONFIG) {
+    if (env.EO_KV) {
         try {
             // EdgeOne KV get method might differ slightly, but usually it's await env.NAMESPACE.get('KEY')
             // Assuming 'CONFIG' is the KV Namespace binding, and we store data under key 'SETTINGS'?
