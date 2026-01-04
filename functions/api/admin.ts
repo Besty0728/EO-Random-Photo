@@ -1,6 +1,6 @@
 import { getConfig, saveConfig } from '../utils/config';
 
-export const onRequest: PagesFunction = async (context) => {
+export const onRequest: PagesFunction<Env> = async (context) => {
     const { request, env } = context;
 
     // 1. Auth Check (Basic for now, or via Header)

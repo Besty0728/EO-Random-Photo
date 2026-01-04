@@ -17,7 +17,7 @@ const DEFAULT_CONFIG: Config = {
     publicImages: []
 };
 
-export async function getConfig(env: any): Promise<Config> {
+export async function getConfig(env: Env): Promise<Config> {
     // 1. Try KV
     if (env.CONFIG) {
         try {
@@ -62,7 +62,7 @@ export async function getConfig(env: any): Promise<Config> {
     };
 }
 
-export async function saveConfig(env: any, newConfig: Partial<Config>): Promise<boolean> {
+export async function saveConfig(env: Env, newConfig: Partial<Config>): Promise<boolean> {
     if (!env.EO_KV) {
         return false; // Cannot save if KV is not configured
     }

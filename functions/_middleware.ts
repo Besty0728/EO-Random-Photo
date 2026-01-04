@@ -1,6 +1,6 @@
 import { getConfig } from './utils/config';
 
-export const onRequest: PagesFunction = async (context) => {
+export const onRequest: PagesFunction<Env> = async (context) => {
     const { request, env, next } = context;
     const url = new URL(request.url);
 
