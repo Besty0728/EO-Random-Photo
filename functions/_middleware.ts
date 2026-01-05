@@ -3,38 +3,35 @@ import { getConfig } from './utils/config';
 export const onRequest: PagesFunction<Env> = async (context) => {
     const { request, env, next } = context;
     const url = new URL(request.url);
+    const pathname = url.pathname;
 
-    // Skip middleware for Admin API and Admin Page
-    if (url.pathname.startsWith('/api/admin') || url.pathname.startsWith('/admin')) {
+    // 快速跳过：Admin 路径
+    if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
         return next();
     }
 
-    // Load Configuration
+    // 加载配置
     const config = await getConfig(env);
-    const referer = request.headers.get('Referer');
-    const filename = url.pathname.split('/').pop();
 
-    // ============================================
-    // 1. Check for "Public Images" (First priority)
-    // ============================================
-    // If the request targets a specific public image, allow it immediately
-    if (filename && config.publicImages.includes(filename)) {
-        // Pass to next handler, set CORS
+    // 提取文件名（优化：避免重复计算）
+    const lastSlash = pathname.lastIndexOf('/');
+    const filename = lastSlash >= 0 ? pathname.slice(lastSlash + 1) : pathname;
+
+    // 使用 Set 提高公开图片匹配性能
+    const publicImagesSet = new Set(config.publicImages);
+
+    // 检查公开图片（最高优先级）
+    if (filename && publicImagesSet.has(filename)) {
         const response = await next();
         response.headers.set('Access-Control-Allow-Origin', '*');
-        // If DDoS mode is ON, we might still want to cache these public images?
-        // api/random.ts handles its own headers. 
-        // Static assets (images) usually get default cache headers from EdgeOne.
         return response;
     }
 
-    // ============================================
-    // 2. DDoS Mode Check (Strict)
-    // ============================================
+    const referer = request.headers.get('Referer');
+
+    // DDoS 模式下严格检查 Referer
     if (config.ddosMode && !referer && !config.publicAccess) {
-        // In DDoS mode, block requests without referer unless it was a public image (handled above)
-        // or publicAccess is globally ON.
-        return new Response('Access Denied (DDoS Protection: No Referer)', { status: 403 });
+        return new Response('Access Denied (DDoS Protection)', { status: 403 });
     }
 
     // ============================================
