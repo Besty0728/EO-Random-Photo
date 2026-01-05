@@ -2,7 +2,7 @@ import manifest from './data/manifest.json';
 import { getConfig, type Config } from './utils/config';
 
 export const onRequest: PagesFunction<Env, any, { config: Config }> = async (context) => {
-    const { request, env, data } = context;
+    const { request, env, data = {} as any } = context;
     const url = new URL(request.url);
 
     const corsHeaders = {
@@ -11,8 +11,8 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
     };
 
     try {
-        // 获取配置（优先从 Middleware 传递的 data 中获取， fallback 到自行读取）
-        const config = data.config || await getConfig(env);
+        // 获取配置（优先从 Middleware 传递的数据中获取，保证一致性与性能）
+        const config = (context.data as any)?.config || await getConfig(env);
 
         // 解析图片类型参数 (h=横屏, v=竖屏，默认自适应)
         const typeParam = url.searchParams.get('type');

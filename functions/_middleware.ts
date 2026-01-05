@@ -1,7 +1,10 @@
 import { getConfig, type Config } from './utils/config';
 
 export const onRequest: PagesFunction<Env, any, { config: Config }> = async (context) => {
-    const { request, env, next, data } = context;
+    // 显式初始化 data，防止解构或后续访问失败
+    context.data = context.data || {};
+
+    const { request, env, next } = context;
     const url = new URL(request.url);
     const pathname = url.pathname;
 
@@ -30,7 +33,7 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
 
         // 加载配置
         const config = await getConfig(env);
-        data.config = config;
+        (context.data as any).config = config;
 
         // 提取文件名
         const lastSlash = pathname.lastIndexOf('/');
@@ -40,13 +43,11 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
         const publicImagesSet = new Set(config.publicImages || []);
         if (filename && publicImagesSet.has(filename)) {
             const response = await next();
-            const newHeaders = new Headers(response.headers);
-            Object.entries(corsHeaders).forEach(([k, v]) => newHeaders.set(k, v));
-            return new Response(response.body, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: newHeaders
-            });
+
+            // 安全注入 Headers
+            const newResponse = new Response(response.body, response);
+            Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
+            return newResponse;
         }
 
         const referer = request.headers.get('Referer');
@@ -78,15 +79,11 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             const response = await next();
 
             // 关键修复：Pages 的静态资源 Response Headers 通常是不可变的。
-            // 我们必须创建一个新的 Response 对象来注入跨域头。
-            const newHeaders = new Headers(response.headers);
-            Object.entries(corsHeaders).forEach(([k, v]) => newHeaders.set(k, v));
+            // 使用 new Response 构造函数创建一个副本以允许修改 Headers。
+            const newResponse = new Response(response.body, response);
+            Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
 
-            return new Response(response.body, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: newHeaders
-            });
+            return newResponse;
         }
 
         return new Response('Access Denied: Protected Resource', { status: 403, headers: corsHeaders });
