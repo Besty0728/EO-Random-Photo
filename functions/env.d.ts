@@ -7,3 +7,6 @@ interface Env {
     EO_CACHE_TIMEOUT: string;
     EO_PUBLIC_IMAGES: string;
 }
+
+// 帮助编译器识别 PagesFunction 的泛型
+declare type Config = import('./utils/config').Config;

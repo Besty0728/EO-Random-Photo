@@ -66,7 +66,7 @@ export async function getConfig(env: Env): Promise<Config> {
         adminPassword,
         source: 'ENV',
         ddosMode,
-        ddosCacheTimeout,
+        ddosCacheTimeout: isNaN(ddosCacheTimeout) ? 5 : ddosCacheTimeout,
         publicImages
     };
 
