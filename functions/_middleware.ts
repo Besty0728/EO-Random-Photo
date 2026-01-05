@@ -1,7 +1,7 @@
-import { getConfig } from './utils/config';
+import { getConfig, type Config } from './utils/config';
 
-export const onRequest: PagesFunction<Env> = async (context) => {
-    const { request, env, next } = context;
+export const onRequest: PagesFunction<Env, any, { config: Config }> = async (context) => {
+    const { request, env, next, data } = context;
     const url = new URL(request.url);
     const pathname = url.pathname;
 
@@ -12,6 +12,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     // 加载配置
     const config = await getConfig(env);
+
+    // 将配置传递给后续函数（如 random.ts）以避免重复读取
+    data.config = config;
 
     // 提取文件名（优化：避免重复计算）
     const lastSlash = pathname.lastIndexOf('/');

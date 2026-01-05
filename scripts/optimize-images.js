@@ -56,14 +56,31 @@ async function processImages() {
             console.log(`  🔄 Converting ${file} -> ${newName}`);
 
             try {
+                // Use temp file specifically for same-file replacement
+                const tempPath = newPath + '.tmp.webp';
+
                 // Convert with FFmpeg
-                // -y: overwrite output
-                // -q:v: quality for webp (0-100)
-                const cmd = `ffmpeg -y -v error -i "${oldPath}" -c:v libwebp -q:v ${QUALITY} "${newPath}"`;
+                // -c:v libwebp: Use WebP encoder
+                // -q:v 75: Quality 75 (Google recommended sweet spot)
+                // -compression_level 6: Compression method 6 (slowest but best compression)
+                // -preset photo: Optimized for photos
+                // -mt: Multi-threading (removed -mt param as it might cause issues on some builds, and ffmpeg usually auto-detects)
+                // -map_metadata -1: Remove all metadata
+                const cmd = `ffmpeg -y -v error -i "${oldPath}" -c:v libwebp -q:v 75 -compression_level 6 -preset photo -map_metadata -1 "${tempPath}"`;
                 execSync(cmd);
 
-                // Delete original if it's different from new path
-                if (oldPath !== newPath) {
+                // Move temp file to target path
+                // Remove original if different (though logical flow here implies we are replacing)
+                if (fs.existsSync(tempPath)) {
+                    // If target exists (and it does), unlink it first to be safe, though renameSync overwrites on POSIX, 
+                    // on Windows unlinking first is safer for some node versions/filesystems
+                    if (fs.existsSync(newPath)) fs.unlinkSync(newPath);
+                    fs.renameSync(tempPath, newPath);
+                }
+
+                // If oldPath was different and we didn't just overwrite it with newPath above
+                // (This block is for renaming e.g. .jpg -> .webp)
+                if (oldPath !== newPath && fs.existsSync(oldPath)) {
                     fs.unlinkSync(oldPath);
                 }
 

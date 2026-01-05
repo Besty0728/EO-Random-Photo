@@ -8,16 +8,18 @@ A high-performance, secure, and customizable Random Photo API built on **Tencent
 
 ✨ **Key Features**:
 *   **🚀 Edge Computing**: Powered by Edge Functions for millisecond-level response times.
+*   **⚡ Zero-Overhead Config**: Implementation of **Global Variable Caching** (for Env mode) and **Context Sharing**, ensuring configuration is parsed only once per isolate/request.
 *   **📱 Adaptive Design**: Automatically serves vertical or horizontal wallpapers based on the user's device.
 *   **🔒 Smart Hotlink Protection**:
     *   **Global Protection**: Protects both the API and static image resources.
     *   **Whitelist**: Only authorized domains can access your resources.
     *   **Public Images**: designate specific images as "Public" for universal access.
+*   **🖼️ High-Fidelity Compression**: Built-in FFmpeg script for generating ultra-low size, high-quality WebP images (`-q 75 -m 6`).
 *   **🛡️ DDoS Defense Mode**: Enables micro-caching on CDN nodes to withstand high-concurrency attacks (10k+ QPS).
 *   **⚙️ Hybrid Configuration**:
     *   **KV Mode**: Real-time configuration updates via a visual admin panel.
     *   **Env Mode**: Read-only configuration via Environment Variables (for users without KV).
-*   **📊 Visual Dashboard**: Built-in minimalist admin panel for easy management.
+*   **🌍 Multi-language Dashboard**: Built-in minimalist admin panel with **CN/EN i18n** support.
 
 ---
 
@@ -28,9 +30,13 @@ Upload your wallpapers to the repository:
 *   Vertical images: `public/images/vertical/`
 *   Horizontal images: `public/images/horizontal/`
 
-### 2. Generate Manifest
-Before committing, run the script to generate the image index:
+### 2. Optimize & Generate Manifest
+Before committing, run the scripts to optimize images and generate the index:
 ```bash
+# 1. Optimize images (High quality WebP, significantly reduces size)
+node scripts/optimize-images.js
+
+# 2. Update the image manifest
 npm run generate:manifest
 ```
 > **Note**: Ensure `functions/data/manifest.json` is included in your Git commit.

@@ -458,6 +458,32 @@
                 font-size: 20px;
             }
         }
+        /* 语言切换按钮 */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-sec);
+            transition: all 0.2s;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--glass-shadow);
+        }
+        .lang-switch:hover {
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 
@@ -466,6 +492,14 @@
     <div class="bg-gradient"></div>
     <div class="floating-orb orb-1"></div>
     <div class="floating-orb orb-2"></div>
+
+    <!-- 语言切换 -->
+    <button class="lang-switch" onclick="toggleLanguage()" id="lang-btn">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+            <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+        </svg>
+        <span id="lang-text">English</span>
+    </button>
 
     <!-- 登录区域 -->
     <div class="container" id="login-section">
@@ -476,8 +510,8 @@
                         d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
                 </svg>
             </div>
-            <h1>Admin Panel</h1>
-            <p class="subtitle">EdgeOne Random Photo</p>
+            <h1 data-i18n="login.title">管理面板</h1>
+            <p class="subtitle" data-i18n="login.subtitle">EdgeOne 随机图片</p>
         </div>
 
         <div class="input-group">
@@ -486,9 +520,9 @@
                     <path
                         d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                 </svg>
-                Password
+                <span data-i18n="login.password">密码</span>
             </label>
-            <input type="password" id="password" placeholder="Enter admin password" autocomplete="current-password">
+            <input type="password" id="password" placeholder="请输入管理密码" data-i18n-placeholder="login.passwordPlaceholder" autocomplete="current-password">
         </div>
 
         <button class="btn btn-primary" onclick="login()">
@@ -496,7 +530,7 @@
                 <path
                     d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" />
             </svg>
-            Sign In
+            <span data-i18n="login.signIn">登录</span>
         </button>
         <div id="login-msg" class="error" style="text-align:center; margin-top:12px;"></div>
     </div>
@@ -504,7 +538,7 @@
     <!-- Dashboard 区域 -->
     <div class="container hidden" id="dashboard-section">
         <div class="logo-section" style="margin-bottom: 1.5rem;">
-            <h1>Dashboard <span id="source-badge" class="badge">Loading...</span></h1>
+            <h1><span data-i18n="dashboard.title">控制面板</span> <span id="source-badge" class="badge" data-i18n="dashboard.loading">加载中...</span></h1>
         </div>
 
         <div class="switch-row">
@@ -514,9 +548,9 @@
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
                     </svg>
-                    Global Public Access
+                    <span data-i18n="dashboard.publicAccess">全局公开访问</span>
                 </span>
-                <span class="switch-desc">Allow anyone to access images</span>
+                <span class="switch-desc" data-i18n="dashboard.publicAccessDesc">允许任何人访问图片</span>
             </div>
             <input type="checkbox" id="public-access" class="toggle-switch">
         </div>
@@ -527,10 +561,10 @@
                     <path
                         d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
                 </svg>
-                Whitelist Domains
+                <span data-i18n="dashboard.whitelist">白名单域名</span>
             </label>
-            <input type="text" id="whitelist" placeholder="example.com, blog.me">
-            <p class="hint-text">Comma separated list of allowed domains</p>
+            <input type="text" id="whitelist" placeholder="example.com, blog.me" data-i18n-placeholder="dashboard.whitelistPlaceholder">
+            <p class="hint-text" data-i18n="dashboard.whitelistHint">逗号分隔的允许域名列表</p>
         </div>
 
         <div class="input-group">
@@ -539,10 +573,10 @@
                     <path
                         d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
                 </svg>
-                Public Images
+                <span data-i18n="dashboard.publicImages">公开图片</span>
             </label>
-            <textarea id="public-images" placeholder="banner.jpg, logo.png"></textarea>
-            <p class="hint-text">These images bypass hotlink protection</p>
+            <textarea id="public-images" placeholder="banner.jpg, logo.png" data-i18n-placeholder="dashboard.publicImagesPlaceholder"></textarea>
+            <p class="hint-text" data-i18n="dashboard.publicImagesHint">这些图片将绕过防盗链保护</p>
         </div>
 
         <div class="section-divider"></div>
@@ -554,9 +588,9 @@
                         <path
                             d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
                     </svg>
-                    DDoS Defense Mode
+                    <span data-i18n="dashboard.ddosMode">DDoS 防护模式</span>
                 </span>
-                <span class="switch-desc">Enable edge caching and strict checks</span>
+                <span class="switch-desc" data-i18n="dashboard.ddosModeDesc">启用边缘缓存和严格检查</span>
             </div>
             <input type="checkbox" id="ddos-mode" class="toggle-switch">
         </div>
@@ -567,7 +601,7 @@
                     <path
                         d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
                 </svg>
-                Cache Timeout (Seconds)
+                <span data-i18n="dashboard.cacheTimeout">缓存超时（秒）</span>
             </label>
             <input type="number" id="ddos-cache" value="5" min="1" max="60">
         </div>
@@ -577,13 +611,121 @@
                 <path
                     d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
             </svg>
-            Save Changes
+            <span data-i18n="dashboard.save">保存更改</span>
         </button>
         <div id="message"></div>
     </div>
 
     <script>
+        const i18n = {
+            zh: {
+                login: {
+                    title: '管理面板',
+                    subtitle: 'EdgeOne 随机图片',
+                    password: '密码',
+                    passwordPlaceholder: '请输入管理密码',
+                    signIn: '登录',
+                    verifying: '验证中...',
+                    invalidPassword: '密码错误',
+                    networkError: '网络错误'
+                },
+                dashboard: {
+                    title: '控制面板',
+                    loading: '加载中...',
+                    publicAccess: '全局公开访问',
+                    publicAccessDesc: '允许任何人访问图片',
+                    whitelist: '白名单域名',
+                    whitelistPlaceholder: 'example.com, blog.me',
+                    whitelistHint: '逗号分隔的允许域名列表',
+                    publicImages: '公开图片',
+                    publicImagesPlaceholder: 'banner.jpg, logo.png',
+                    publicImagesHint: '这些图片将绕过防盗链保护',
+                    ddosMode: 'DDoS 防护模式',
+                    ddosModeDesc: '启用边缘缓存和严格检查',
+                    cacheTimeout: '缓存超时（秒）',
+                    save: '保存更改',
+                    saving: '保存中...',
+                    saved: '✓ 配置已保存！',
+                    saveFailed: '保存失败: ',
+                    readOnly: '🔒 只读模式（环境变量配置）'
+                },
+                langName: 'English' // 切换按钮显示的文字（Target Language）
+            },
+            en: {
+                login: {
+                    title: 'Admin Panel',
+                    subtitle: 'EdgeOne Random Photo',
+                    password: 'Password',
+                    passwordPlaceholder: 'Enter admin password',
+                    signIn: 'Sign In',
+                    verifying: 'Verifying...',
+                    invalidPassword: 'Invalid Password',
+                    networkError: 'Network Error',
+                },
+                dashboard: {
+                    title: 'Dashboard',
+                    loading: 'Loading...',
+                    publicAccess: 'Global Public Access',
+                    publicAccessDesc: 'Allow anyone to access images',
+                    whitelist: 'Whitelist Domains',
+                    whitelistPlaceholder: 'example.com, blog.me',
+                    whitelistHint: 'Comma separated list of allowed domains',
+                    publicImages: 'Public Images',
+                    publicImagesPlaceholder: 'banner.jpg, logo.png',
+                    publicImagesHint: 'These images bypass hotlink protection',
+                    ddosMode: 'DDoS Defense Mode',
+                    ddosModeDesc: 'Enable edge caching and strict checks',
+                    cacheTimeout: 'Cache Timeout (Seconds)',
+                    save: 'Save Changes',
+                    saving: 'Saving...',
+                    saved: '✓ Configuration Saved!',
+                    saveFailed: 'Failed: ',
+                    readOnly: '🔒 Read-Only (Environment Variables)'
+                },
+                langName: '中文'
+            }
+        };
+
+        let currentLang = localStorage.getItem('admin_lang') || 'zh';
         let authToken = '';
+
+        // 初始化语言
+        setLanguage(currentLang);
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'zh' ? 'en' : 'zh';
+            setLanguage(currentLang);
+            localStorage.setItem('admin_lang', currentLang);
+        }
+
+        function setLanguage(lang) {
+            const texts = i18n[lang];
+            
+            // 更新切换按钮文本
+            document.getElementById('lang-text').innerText = texts.langName;
+
+            // 更新所有带有 data-i18n 的元素
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                const val = getNestedValue(texts, key);
+                if (val) el.innerText = val;
+            });
+
+            // 更新 placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                const val = getNestedValue(texts, key);
+                if (val) el.placeholder = val;
+            });
+        }
+
+        function getNestedValue(obj, path) {
+            return path.split('.').reduce((prev, curr) => prev ? prev[curr] : null, obj);
+        }
+
+        function getText(key) {
+             return getNestedValue(i18n[currentLang], key);
+        }
 
         async function login() {
             const pwd = document.getElementById('password').value;
@@ -593,7 +735,12 @@
 
             const btn = document.querySelector('#login-section .btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg class="spinner" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Verifying...';
+            // 这里的 Verifying... 也需要国际化，但为了保留 SVG 动画，我们只替换文本节点
+            // 不过更简单的方式是每次都重置innerHTML
+            
+            const verifyingText = getText('login.verifying');
+            
+            btn.innerHTML = '<svg class="spinner" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>' + ' ' + verifyingText;
             btn.classList.add('loading');
 
             try {
@@ -605,14 +752,18 @@
                     const config = await res.json();
                     showDashboard(config);
                 } else {
-                    document.getElementById('login-msg').innerText = 'Invalid Password';
+                    document.getElementById('login-msg').innerText = getText('login.invalidPassword');
                     authToken = '';
                 }
             } catch (e) {
-                document.getElementById('login-msg').innerText = 'Network Error';
+                document.getElementById('login-msg').innerText = getText('login.networkError');
             } finally {
-                btn.innerHTML = originalHTML;
+                // 恢复原始按钮内容，并确保文本正确
                 btn.classList.remove('loading');
+                // 因为 login() 执行完可能语言已经切换了（虽然不太可能在 login 过程中切换），
+                // 最好是重新渲染按钮内容
+                const signInText = getText('login.signIn');
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" /></svg> ' + `<span data-i18n="login.signIn">${signInText}</span>`;
             }
         }
 
@@ -629,12 +780,17 @@
             document.getElementById('public-images').value = (config.publicImages || []).join(', ');
 
             const badge = document.getElementById('source-badge');
-            badge.innerText = config.source + ' Mode';
-
+            // badge.innerText = config.source + ' Mode'; // 这里保留英文 Mode 描述还是？
+            // 简单处理：如果是 ENV，显示只读提示
             if (config.source === 'ENV') {
-                const elements = document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button');
+                 // 保持原样，额外提示在下方
+            }
+            badge.innerText = config.source + ' Mode';
+            
+            if (config.source === 'ENV') {
+                const elements = document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button:not(.lang-switch)');
                 elements.forEach(el => el.disabled = true);
-                showMessage('🔒 Read-Only (Environment Variables)', '');
+                showMessage(getText('dashboard.readOnly'), '');
                 document.getElementById('message').style.color = 'var(--text-sec)';
                 document.getElementById('message').style.background = 'transparent';
             }
@@ -642,8 +798,9 @@
 
         async function saveConfig() {
             const btn = document.getElementById('save-btn');
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> Saving...';
+            const savingText = getText('dashboard.saving');
+            
+            btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> ' + savingText;
             btn.classList.add('loading');
 
             const publicAccess = document.getElementById('public-access').checked;
@@ -667,16 +824,17 @@
                 });
 
                 if (res.ok) {
-                    showMessage('✓ Configuration Saved!', 'success');
+                    showMessage(getText('dashboard.saved'), 'success');
                 } else {
                     const msg = await res.text();
-                    showMessage('Failed: ' + msg, 'error');
+                    showMessage(getText('dashboard.saveFailed') + msg, 'error');
                 }
             } catch (e) {
-                showMessage('Network Error: ' + e.message, 'error');
+                showMessage(getText('login.networkError') + ': ' + e.message, 'error');
             } finally {
-                btn.innerHTML = originalHTML;
                 btn.classList.remove('loading');
+                const saveText = getText('dashboard.save');
+                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" /></svg> ' + `<span data-i18n="dashboard.save">${saveText}</span>`;
             }
         }
 

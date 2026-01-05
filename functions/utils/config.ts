@@ -8,6 +8,9 @@ export interface Config {
     publicImages: string[]; // List of filenames that are public
 }
 
+// 全局变量缓存，利用 Isolate 复用机制提升性能（仅针对 ENV 模式）
+let globalConfigCache: Config | null = null;
+
 const DEFAULT_CONFIG: Config = {
     publicAccess: false,
     whitelist: [],
@@ -18,6 +21,12 @@ const DEFAULT_CONFIG: Config = {
 };
 
 export async function getConfig(env: Env): Promise<Config> {
+    // 0. 优先尝试全局变量缓存 (针对纯环境变量部署的极致优化)
+    // 仅在未配置 KV 时使用全局缓存，因为 ENV 在单次部署中是不变的
+    if (!env.EO_KV && globalConfigCache) {
+        return globalConfigCache;
+    }
+
     // 1. Try KV
     if (env.EO_KV) {
         try {
@@ -51,7 +60,7 @@ export async function getConfig(env: Env): Promise<Config> {
     const ddosCacheTimeout = env.EO_CACHE_TIMEOUT ? parseInt(env.EO_CACHE_TIMEOUT, 10) : 5;
     const publicImages = env.EO_PUBLIC_IMAGES ? env.EO_PUBLIC_IMAGES.split(',') : [];
 
-    return {
+    const config: Config = {
         publicAccess,
         whitelist,
         adminPassword,
@@ -60,6 +69,11 @@ export async function getConfig(env: Env): Promise<Config> {
         ddosCacheTimeout,
         publicImages
     };
+
+    // 存入全局变量缓存，以便后续请求直接复用已解析的结果
+    globalConfigCache = config;
+
+    return config;
 }
 
 export async function saveConfig(env: Env, newConfig: Partial<Config>): Promise<boolean> {
