@@ -57,6 +57,7 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
 
     // 构建响应头
     const headers = new Headers();
+    headers.set('Access-Control-Allow-Origin', '*');
 
     // 添加 Vary 头优化缓存命中率
     headers.set('Vary', 'Accept, User-Agent');
