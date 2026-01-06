@@ -1,8 +1,7 @@
 {
-    "$schema": "https://edgeone.ai/schemas/edgeone.json",
     "headers": [
         {
-            "source": "/images/(.*)",
+            "source": "/images/*",
             "headers": [
                 {
                     "key": "Access-Control-Allow-Origin",
@@ -13,6 +12,12 @@
                     "value": "GET, HEAD, OPTIONS"
                 }
             ]
+        }
+    ],
+    "caches": [
+        {
+            "source": "/images/*",
+            "cacheTtl": 3600
         }
     ]
 }
