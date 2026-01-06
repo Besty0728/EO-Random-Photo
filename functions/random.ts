@@ -57,7 +57,7 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
         } else if (paramRedirect === 'false') {
             shouldRedirect = false;
         } else {
-            // 默认：浏览器导航使用代理模式，img 标签使用重定向意识
+            // 默认：浏览器导航使用代理模式，img 标签使用重定向
             shouldRedirect = !isBrowserNav;
         }
 
