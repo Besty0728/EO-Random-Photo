@@ -31,6 +31,16 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             return next();
         }
 
+        // 🎯 关键修复：/images/* 静态资源需要无条件添加 CORS 头
+        // 当 /random API 302 重定向到 /images/xxx.webp 时，浏览器会检查最终资源的 CORS 头
+        // 此时请求可能没有 referer（或 referer 是调用方站点），必须直接放行并添加 CORS
+        if (pathname.startsWith('/images/')) {
+            const response = await next();
+            const newResponse = new Response(response.body, response);
+            Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
+            return newResponse;
+        }
+
         // 加载配置
         const config = await getConfig(env);
         (context.data as any).config = config;
