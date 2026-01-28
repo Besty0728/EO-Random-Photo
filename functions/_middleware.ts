@@ -68,8 +68,11 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
         }
 
         let isAllowed = false;
+        let allowReason = 'none';
+        
         if (config.publicAccess) {
             isAllowed = true;
+            allowReason = 'publicAccess=true';
         }
 
         if (!isAllowed && referer) {
@@ -78,12 +81,25 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
                 const hostname = refererUrl.hostname;
                 if (hostname === url.hostname) {
                     isAllowed = true;
+                    allowReason = 'sameHost';
                 }
                 if (config.whitelist.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
                     isAllowed = true;
+                    allowReason = `whitelist:${hostname}`;
                 }
-            } catch (e) { }
+            } catch (e) { 
+                allowReason = 'referer-parse-error';
+            }
         }
+
+        // 🔍 调试：添加响应头显示检查结果
+        const debugHeaders = {
+            'X-Debug-Allowed': String(isAllowed),
+            'X-Debug-Reason': allowReason,
+            'X-Debug-Referer': referer || 'none',
+            'X-Debug-Whitelist': config.whitelist.join(',') || 'empty',
+            'X-Debug-PublicAccess': String(config.publicAccess),
+        };
 
         if (isAllowed) {
             const response = await next();
@@ -92,11 +108,15 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             // 使用 new Response 构造函数创建一个副本以允许修改 Headers。
             const newResponse = new Response(response.body, response);
             Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
+            Object.entries(debugHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
 
             return newResponse;
         }
 
-        return new Response('Access Denied: Protected Resource', { status: 403, headers: corsHeaders });
+        return new Response('Access Denied: Protected Resource', { 
+            status: 403, 
+            headers: { ...corsHeaders, ...debugHeaders } 
+        });
 
     } catch (err: any) {
         // 返回详细错误以供调试
