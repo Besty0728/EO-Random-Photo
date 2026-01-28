@@ -11,8 +11,59 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
     };
 
     try {
-        // 获取配置（优先从 Middleware 传递的数据中获取，保证一致性与性能）
+        // 获取配置
         const config = (context.data as any)?.config || await getConfig(env);
+        
+        // ========== 🛡️ 防盗链检查 (直接在此处执行，不依赖 middleware) ==========
+        const referer = request.headers.get('Referer');
+        
+        // DDoS 模式：无 Referer 且非公开访问，直接拒绝
+        if (config.ddosMode && !referer && !config.publicAccess) {
+            return new Response('Access Denied (DDoS Protection)', { 
+                status: 403, 
+                headers: { ...corsHeaders, 'X-Blocked-By': 'DDoS-NoReferer' } 
+            });
+        }
+        
+        // 检查是否允许访问
+        let isAllowed = config.publicAccess;
+        let blockReason = 'not-in-whitelist';
+        
+        if (!isAllowed && referer) {
+            try {
+                const refererUrl = new URL(referer);
+                const hostname = refererUrl.hostname;
+                
+                // 同域名允许
+                if (hostname === url.hostname) {
+                    isAllowed = true;
+                }
+                
+                // 白名单检查
+                if (config.whitelist.some((domain: string) => hostname === domain || hostname.endsWith('.' + domain))) {
+                    isAllowed = true;
+                }
+                
+                if (!isAllowed) {
+                    blockReason = `referer:${hostname}`;
+                }
+            } catch (e) {
+                blockReason = 'invalid-referer';
+            }
+        }
+        
+        // 拒绝未授权访问
+        if (!isAllowed) {
+            return new Response('Access Denied: Protected Resource', { 
+                status: 403, 
+                headers: { 
+                    ...corsHeaders, 
+                    'X-Blocked-By': blockReason,
+                    'X-Whitelist': config.whitelist.join(',') || 'empty',
+                } 
+            });
+        }
+        // ========== 防盗链检查结束 ==========
 
         // 解析图片类型参数 (h=横屏, v=竖屏，默认自适应)
         const typeParam = url.searchParams.get('type');
