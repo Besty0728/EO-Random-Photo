@@ -17,18 +17,24 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
 
     // 处理预检请求
     if (request.method === 'OPTIONS') {
-        return new Response(null, { headers: corsHeaders });
+        return new Response(null, { headers: { ...corsHeaders, 'X-Debug-Path': 'OPTIONS' } });
     }
 
     try {
         // 内部请求放行（防止 random.ts 中的 fetch 被拦截或死循环）
         if (request.headers.get('X-Internal-Request') === 'true') {
-            return next();
+            const response = await next();
+            const newResponse = new Response(response.body, response);
+            newResponse.headers.set('X-Debug-Path', 'INTERNAL');
+            return newResponse;
         }
 
         // 快速跳过：Admin 路径
         if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
-            return next();
+            const response = await next();
+            const newResponse = new Response(response.body, response);
+            newResponse.headers.set('X-Debug-Path', 'ADMIN');
+            return newResponse;
         }
 
         // 🎯 关键修复：/images/* 静态资源需要无条件添加 CORS 头
@@ -38,6 +44,7 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             const response = await next();
             const newResponse = new Response(response.body, response);
             Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
+            newResponse.headers.set('X-Debug-Path', 'IMAGES');
             return newResponse;
         }
 
