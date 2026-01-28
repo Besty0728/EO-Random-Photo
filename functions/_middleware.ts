@@ -17,24 +17,18 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
 
     // 处理预检请求
     if (request.method === 'OPTIONS') {
-        return new Response(null, { headers: { ...corsHeaders, 'X-Debug-Path': 'OPTIONS' } });
+        return new Response(null, { headers: corsHeaders });
     }
 
     try {
         // 内部请求放行（防止 random.ts 中的 fetch 被拦截或死循环）
         if (request.headers.get('X-Internal-Request') === 'true') {
-            const response = await next();
-            const newResponse = new Response(response.body, response);
-            newResponse.headers.set('X-Debug-Path', 'INTERNAL');
-            return newResponse;
+            return next();
         }
 
         // 快速跳过：Admin 路径
         if (pathname.startsWith('/api/admin') || pathname.startsWith('/admin')) {
-            const response = await next();
-            const newResponse = new Response(response.body, response);
-            newResponse.headers.set('X-Debug-Path', 'ADMIN');
-            return newResponse;
+            return next();
         }
 
         // 🎯 关键修复：/images/* 静态资源需要无条件添加 CORS 头
@@ -44,7 +38,6 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             const response = await next();
             const newResponse = new Response(response.body, response);
             Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
-            newResponse.headers.set('X-Debug-Path', 'IMAGES');
             return newResponse;
         }
 
@@ -74,13 +67,7 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
             return new Response('Access Denied (DDoS Protection)', { status: 403, headers: corsHeaders });
         }
 
-        let isAllowed = false;
-        let allowReason = 'none';
-        
-        if (config.publicAccess) {
-            isAllowed = true;
-            allowReason = 'publicAccess=true';
-        }
+        let isAllowed = config.publicAccess;
 
         if (!isAllowed && referer) {
             try {
@@ -88,41 +75,23 @@ export const onRequest: PagesFunction<Env, any, { config: Config }> = async (con
                 const hostname = refererUrl.hostname;
                 if (hostname === url.hostname) {
                     isAllowed = true;
-                    allowReason = 'sameHost';
                 }
                 if (config.whitelist.some(domain => hostname === domain || hostname.endsWith('.' + domain))) {
                     isAllowed = true;
-                    allowReason = `whitelist:${hostname}`;
                 }
-            } catch (e) { 
-                allowReason = 'referer-parse-error';
-            }
+            } catch (e) { /* 忽略无效 referer */ }
         }
-
-        // 🔍 调试：添加响应头显示检查结果
-        const debugHeaders = {
-            'X-Debug-Allowed': String(isAllowed),
-            'X-Debug-Reason': allowReason,
-            'X-Debug-Referer': referer || 'none',
-            'X-Debug-Whitelist': config.whitelist.join(',') || 'empty',
-            'X-Debug-PublicAccess': String(config.publicAccess),
-        };
 
         if (isAllowed) {
             const response = await next();
-
-            // 关键修复：Pages 的静态资源 Response Headers 通常是不可变的。
-            // 使用 new Response 构造函数创建一个副本以允许修改 Headers。
             const newResponse = new Response(response.body, response);
             Object.entries(corsHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
-            Object.entries(debugHeaders).forEach(([k, v]) => newResponse.headers.set(k, v));
-
             return newResponse;
         }
 
         return new Response('Access Denied: Protected Resource', { 
             status: 403, 
-            headers: { ...corsHeaders, ...debugHeaders } 
+            headers: corsHeaders 
         });
 
     } catch (err: any) {

@@ -84,7 +84,6 @@ Add these variables in EdgeOne Pages settings:
 | `type` | (Optional) `h`=Horizontal, `v`=Vertical. Auto-detects if omitted. |
 | `redirect` | (Optional) `true`=Returns 302 Redirect; Omitted or `false`=Returns Image Content directly (Proxy Mode). |
 
-**Example**:
 ```html
 <!-- Direct Image Return (Recommended, URL stays /random) -->
 <img src="https://api.your-site.com/random" />
@@ -94,11 +93,37 @@ Add these variables in EdgeOne Pages settings:
 <img src="https://api.your-site.com/random?redirect=true" />
 ```
 
-<!-- Force Vertical -->
-<img src="https://api.your-site.com/random?type=v" />
+### 2. Health Check (for UptimeKuma)
+**Endpoint**: `/health`
+
+Returns service health status with actual validation of image availability.
+
+| Status Code | Meaning |
+| :--- | :--- |
+| `200` | All checks passed |
+| `503` | Service unhealthy |
+
+**Response Example**:
+```json
+{
+  "status": "ok",
+  "timestamp": 1706438400000,
+  "responseTime": "45ms",
+  "checks": {
+    "manifest": true,
+    "randomApi": true,
+    "imageAccess": true
+  }
+}
 ```
 
-### 2. Access Specific Public Image
+**UptimeKuma Configuration**:
+- **Monitor Type**: HTTP(s)
+- **URL**: `https://your-domain/health`
+- **Expected Status**: `200`
+- **Keyword**: `"status":"ok"`
+
+### 3. Access Specific Public Image
 If `banner.jpg` is in your `EO_PUBLIC_IMAGES` whitelist:
 
 ```html
@@ -125,11 +150,15 @@ When enabled:
 ## 📂 Project Structure
 ```
 ├── functions/
-│   ├── _middleware.ts    # Global Access Control
+│   ├── _middleware.ts    # Global Access Control & CORS
+│   ├── random.ts         # Random Image Logic
+│   ├── health.ts         # Health Check Endpoint
 │   ├── api/
-│   │   ├── random.ts     # Random Image Logic
 │   │   └── admin.ts      # Admin API
-│   └── utils/config.ts   # Config Loader
+│   ├── data/
+│   │   └── manifest.json # Image Index (auto-generated)
+│   └── utils/
+│       └── config.ts     # Config Loader (KV/Env)
 ├── public/
 │   ├── admin/            # Admin Dashboard
 │   └── images/           # Image Assets
