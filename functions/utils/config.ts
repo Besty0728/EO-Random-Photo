@@ -4,6 +4,7 @@ export interface Config {
     adminPassword?: string;
     fallbackPassword?: string; // 环境变量中的兜底密码，始终可用于登录
     source: 'KV' | 'ENV';
+    kvBound: boolean; // KV 是否已绑定（即使数据为空也为 true）
     ddosMode: boolean;
     ddosCacheTimeout: number; // in seconds
     publicImages: string[]; // List of filenames that are public
@@ -16,6 +17,7 @@ const DEFAULT_CONFIG: Config = {
     publicAccess: false,
     whitelist: [],
     source: 'ENV',
+    kvBound: false,
     ddosMode: false,
     ddosCacheTimeout: 5,
     publicImages: []
@@ -46,6 +48,7 @@ export async function getConfig(env: Env): Promise<Config> {
                     ...DEFAULT_CONFIG,
                     ...parsed,
                     source: 'KV',
+                    kvBound: true,
                     // 始终保留环境变量密码作为兜底（即使 KV 中有密码）
                     fallbackPassword: env.ADMIN_PASSWORD
                 };
@@ -68,6 +71,7 @@ export async function getConfig(env: Env): Promise<Config> {
         whitelist,
         adminPassword,
         source: 'ENV',
+        kvBound: !!env.EO_KV, // KV 已绑定但数据为空时也为 true
         ddosMode,
         ddosCacheTimeout: isNaN(ddosCacheTimeout) ? 5 : ddosCacheTimeout,
         publicImages

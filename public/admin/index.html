@@ -787,7 +787,9 @@
             }
             badge.innerText = config.source + ' Mode';
             
-            if (config.source === 'ENV') {
+            // 关键修复：根据 kvBound 判断是否禁用，而非 source
+            // 即使 source 是 ENV，只要 kvBound 为 true，就允许编辑并初始化 KV
+            if (!config.kvBound) {
                 const elements = document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button:not(.lang-switch)');
                 elements.forEach(el => el.disabled = true);
                 showMessage(getText('dashboard.readOnly'), '');

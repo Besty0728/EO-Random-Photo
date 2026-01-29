@@ -31,8 +31,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     if (request.method === 'POST') {
-        if (currentConfig.source === 'ENV') {
-            return new Response('Configuration is Read-Only in Environment Variable Mode. Please use KV or update Env Vars in Console.', { status: 403 });
+        // 关键修复：根据 KV 绑定状态决定是否允许保存
+        // 即使当前 source 是 ENV（KV 为空），只要 KV 已绑定，就允许初始化保存
+        if (!env.EO_KV) {
+            return new Response('Configuration is Read-Only: No KV binding. Please bind EO_KV in EdgeOne console.', { status: 403 });
         }
 
         try {
