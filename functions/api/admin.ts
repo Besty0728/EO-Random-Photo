@@ -31,9 +31,8 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     }
 
     if (request.method === 'POST') {
-        // 关键修复：根据 KV 绑定状态决定是否允许保存
-        // 即使当前 source 是 ENV（KV 为空），只要 KV 已绑定，就允许初始化保存
-        if (!env.EO_KV) {
+        // 根据 kvBound 判断是否允许保存（config.ts 已通过全局变量检查 KV 可用性）
+        if (!currentConfig.kvBound) {
             return new Response('Configuration is Read-Only: No KV binding. Please bind EO_KV in EdgeOne console.', { status: 403 });
         }
 

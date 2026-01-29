@@ -23,25 +23,22 @@ const DEFAULT_CONFIG: Config = {
     publicImages: []
 };
 
+// 检查 KV 是否可用（EdgeOne 通过全局变量访问 KV）
+function isKVAvailable(): boolean {
+    return typeof EO_KV !== 'undefined' && EO_KV !== null;
+}
+
 export async function getConfig(env: Env): Promise<Config> {
     // 0. 优先尝试全局变量缓存 (针对纯环境变量部署的极致优化)
     // 仅在未配置 KV 时使用全局缓存，因为 ENV 在单次部署中是不变的
-    if (!env.EO_KV && globalConfigCache) {
+    if (!isKVAvailable() && globalConfigCache) {
         return globalConfigCache;
     }
 
-    // 1. Try KV
-    if (env.EO_KV) {
+    // 1. Try KV (EdgeOne KV 通过全局变量访问)
+    if (isKVAvailable()) {
         try {
-            // EdgeOne KV get method might differ slightly, but usually it's await env.NAMESPACE.get('KEY')
-            // Assuming 'CONFIG' is the KV Namespace binding, and we store data under key 'SETTINGS'?
-            // Or 'CONFIG' is the Namespace, key is 'MAIN'? 
-            // Plan said: Key `CONFIG` in KV. So env.KV_NAMESPACE_NAME.get('CONFIG')
-            // Let's assume the Namespace binding is named `EO_KV` for clarity, and key is `CONFIG`.
-            // BUT, usually users bind a KV Namespace to a variable like `MY_KV`.
-            // Let's assume `env.EO_KV` exists.
-
-            const kvValue = await env.EO_KV?.get('CONFIG');
+            const kvValue = await EO_KV!.get('CONFIG');
             if (kvValue) {
                 const parsed = JSON.parse(kvValue);
                 return {
@@ -53,12 +50,30 @@ export async function getConfig(env: Env): Promise<Config> {
                     fallbackPassword: env.ADMIN_PASSWORD
                 };
             }
+            // KV 已绑定但数据为空，返回 ENV 配置但标记 kvBound = true
+            const publicAccess = env.EO_PUBLIC_ACCESS === 'true';
+            const whitelist = env.EO_WHITELIST ? env.EO_WHITELIST.split(',') : [];
+            const adminPassword = env.ADMIN_PASSWORD;
+            const ddosMode = env.EO_DDOS_MODE === 'true';
+            const ddosCacheTimeout = env.EO_CACHE_TIMEOUT ? parseInt(env.EO_CACHE_TIMEOUT, 10) : 5;
+            const publicImages = env.EO_PUBLIC_IMAGES ? env.EO_PUBLIC_IMAGES.split(',') : [];
+
+            return {
+                publicAccess,
+                whitelist,
+                adminPassword,
+                source: 'ENV',
+                kvBound: true, // KV 已绑定，允许初始化保存
+                ddosMode,
+                ddosCacheTimeout: isNaN(ddosCacheTimeout) ? 5 : ddosCacheTimeout,
+                publicImages
+            };
         } catch (e) {
             console.warn('Failed to read from KV:', e);
         }
     }
 
-    // 2. Fallback to Env
+    // 2. Fallback to Env (KV 未绑定)
     const publicAccess = env.EO_PUBLIC_ACCESS === 'true';
     const whitelist = env.EO_WHITELIST ? env.EO_WHITELIST.split(',') : [];
     const adminPassword = env.ADMIN_PASSWORD;
@@ -71,7 +86,7 @@ export async function getConfig(env: Env): Promise<Config> {
         whitelist,
         adminPassword,
         source: 'ENV',
-        kvBound: !!env.EO_KV, // KV 已绑定但数据为空时也为 true
+        kvBound: false, // KV 未绑定
         ddosMode,
         ddosCacheTimeout: isNaN(ddosCacheTimeout) ? 5 : ddosCacheTimeout,
         publicImages
@@ -84,7 +99,7 @@ export async function getConfig(env: Env): Promise<Config> {
 }
 
 export async function saveConfig(env: Env, newConfig: Partial<Config>): Promise<boolean> {
-    if (!env.EO_KV) {
+    if (!isKVAvailable()) {
         return false; // Cannot save if KV is not configured
     }
 
@@ -101,7 +116,7 @@ export async function saveConfig(env: Env, newConfig: Partial<Config>): Promise<
     };
 
     try {
-        await env.EO_KV.put('CONFIG', JSON.stringify(toSave));
+        await EO_KV!.put('CONFIG', JSON.stringify(toSave));
         return true;
     } catch (e) {
         console.error('Failed to write to KV:', e);
