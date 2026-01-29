@@ -780,12 +780,21 @@
             document.getElementById('public-images').value = (config.publicImages || []).join(', ');
 
             const badge = document.getElementById('source-badge');
-            // badge.innerText = config.source + ' Mode'; // 这里保留英文 Mode 描述还是？
-            // 简单处理：如果是 ENV，显示只读提示
-            if (config.source === 'ENV') {
-                 // 保持原样，额外提示在下方
+            // 根据 kvBound 和 source 组合显示更准确的状态
+            if (config.kvBound && config.source === 'KV') {
+                badge.innerText = 'KV Mode';
+                badge.style.background = 'rgba(52, 199, 89, 0.15)';
+                badge.style.color = 'var(--success)';
+            } else if (config.kvBound && config.source === 'ENV') {
+                // KV 已绑定但数据为空，保存后将切换为 KV Mode
+                badge.innerText = 'KV Ready';
+                badge.style.background = 'rgba(0, 122, 255, 0.15)';
+                badge.style.color = 'var(--primary)';
+            } else {
+                badge.innerText = 'Read-Only';
+                badge.style.background = 'rgba(255, 59, 48, 0.15)';
+                badge.style.color = 'var(--danger)';
             }
-            badge.innerText = config.source + ' Mode';
             
             // 关键修复：根据 kvBound 判断是否禁用，而非 source
             // 即使 source 是 ENV，只要 kvBound 为 true，就允许编辑并初始化 KV
