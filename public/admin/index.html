@@ -625,6 +625,55 @@
             color: var(--danger);
         }
 
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 底部固定保存栏 */
+        .save-bar {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+
         /* 响应式 */
         @media (max-width: 480px) {
             body {
@@ -640,6 +689,55 @@
             .btn {
                 font-size: 16px;
             }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all var(--transition);
+        }
+
+        .tab-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 底部固定保存栏 */
+        .save-bar {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--glass-border);
         }
     </style>
 </head>
@@ -737,149 +835,153 @@
             </h1>
         </div>
 
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <div class="toggle-title" data-i18n="dashboard.publicAccess">全局公开访问</div>
-                <div class="toggle-desc" data-i18n="dashboard.publicAccessDesc">允许任何人访问图片</div>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('general')" data-i18n="tabs.general">常规设置</button>
+            <button class="tab-btn" onclick="switchTab('advanced')" data-i18n="tabs.advanced">高级设置</button>
+            <button class="tab-btn" onclick="switchTab('security')" data-i18n="tabs.security">安全中心</button>
+        </div>
+
+        <!-- Tab: General -->
+        <div id="tab-general" class="tab-content active">
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-title" data-i18n="dashboard.publicAccess">全局公开访问</div>
+                    <div class="toggle-desc" data-i18n="dashboard.publicAccessDesc">允许任何人访问图片</div>
+                </div>
+                <input type="checkbox" id="public-access" class="toggle-switch">
             </div>
-            <input type="checkbox" id="public-access" class="toggle-switch">
-        </div>
 
-        <div class="form-group">
-            <label class="form-label" for="whitelist">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-                </svg>
-                <span data-i18n="dashboard.whitelist">白名单域名</span>
-            </label>
-            <input type="text" id="whitelist" class="form-input" placeholder="example.com, blog.me"
-                data-i18n-placeholder="dashboard.whitelistPlaceholder">
-            <div class="form-hint" data-i18n="dashboard.whitelistHint">逗号分隔的允许域名列表</div>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label" for="public-images">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-                </svg>
-                <span data-i18n="dashboard.publicImages">公开图片</span>
-            </label>
-            <textarea id="public-images" class="form-textarea" placeholder="banner.jpg, logo.png"
-                data-i18n-placeholder="dashboard.publicImagesPlaceholder"></textarea>
-            <div class="form-hint" data-i18n="dashboard.publicImagesHint">这些图片将绕过防盗链保护</div>
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="toggle-row">
-            <div class="toggle-info">
-                <div class="toggle-title" data-i18n="dashboard.ddosMode">DDoS 防护模式</div>
-                <div class="toggle-desc" data-i18n="dashboard.ddosModeDesc">启用边缘缓存和严格检查</div>
-            </div>
-            <input type="checkbox" id="ddos-mode" class="toggle-switch">
-        </div>
-
-        <div class="form-group">
-            <label class="form-label" for="ddos-cache">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
-                </svg>
-                <span data-i18n="dashboard.cacheTimeout">缓存超时（秒）</span>
-            </label>
-            <input type="number" id="ddos-cache" class="form-input" value="5" min="1" max="60">
-        </div>
-
-        <button class="btn btn-primary" onclick="saveConfig()" id="save-btn">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
-            </svg>
-            <span data-i18n="dashboard.save">保存更改</span>
-        </button>
-        <div id="message" class="message"></div>
-
-        <div class="divider"></div>
-
-        <!-- 安全设置 -->
-        <div class="section-title">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
-            </svg>
-            <span data-i18n="security.title">安全设置</span>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label" for="current-password">
-                <svg viewBox="0 0 24 24">
-                    <path
-                        d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z" />
-                </svg>
-                <span data-i18n="security.currentPassword">当前密码</span>
-            </label>
-            <div class="password-display">
-                <input type="text" id="current-password" class="form-input" readonly>
-                <button type="button" class="eye-btn" onclick="togglePasswordVisibility()" aria-label="显示/隐藏密码">
-                    <svg id="eye-icon" viewBox="0 0 24 24">
+            <div class="form-group">
+                <label class="form-label" for="whitelist">
+                    <svg viewBox="0 0 24 24">
                         <path
-                            d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
                     </svg>
-                </button>
+                    <span data-i18n="dashboard.whitelist">白名单域名</span>
+                </label>
+                <input type="text" id="whitelist" class="form-input" placeholder="example.com, blog.me"
+                    data-i18n-placeholder="dashboard.whitelistPlaceholder">
+                <div class="form-hint" data-i18n="dashboard.whitelistHint">逗号分隔的允许域名列表</div>
             </div>
-            <div class="form-hint" data-i18n="security.currentPasswordHint">这是当前生效的 KV 密码（环境变量密码始终可用）</div>
+
+            <div class="form-group">
+                <label class="form-label" for="public-images">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
+                    </svg>
+                    <span data-i18n="dashboard.publicImages">公开图片</span>
+                </label>
+                <textarea id="public-images" class="form-textarea" placeholder="banner.jpg, logo.png"
+                    data-i18n-placeholder="dashboard.publicImagesPlaceholder"></textarea>
+                <div class="form-hint" data-i18n="dashboard.publicImagesHint">这些图片将绕过防盗链保护</div>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label class="form-label" for="new-password">
+        <!-- Tab: Advanced -->
+        <div id="tab-advanced" class="tab-content">
+            <div class="toggle-row">
+                <div class="toggle-info">
+                    <div class="toggle-title" data-i18n="dashboard.ddosMode">DDoS 防护模式</div>
+                    <div class="toggle-desc" data-i18n="dashboard.ddosModeDesc">启用边缘缓存和严格检查</div>
+                </div>
+                <input type="checkbox" id="ddos-mode" class="toggle-switch">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="ddos-cache">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                    </svg>
+                    <span data-i18n="dashboard.cacheTimeout">缓存超时（秒）</span>
+                </label>
+                <input type="number" id="ddos-cache" class="form-input" value="5" min="1" max="60">
+            </div>
+        </div>
+
+        <!-- Tab: Security -->
+        <div id="tab-security" class="tab-content">
+            <div class="form-group">
+                <label class="form-label" for="current-password">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM8.9 6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H8.9V6zM18 20H6V10h12v10z" />
+                    </svg>
+                    <span data-i18n="security.currentPassword">当前密码</span>
+                </label>
+                <div class="password-display">
+                    <input type="text" id="current-password" class="form-input" readonly>
+                    <button type="button" class="eye-btn" onclick="togglePasswordVisibility()" aria-label="显示/隐藏密码">
+                        <svg id="eye-icon" viewBox="0 0 24 24">
+                            <path
+                                d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="form-hint" data-i18n="security.currentPasswordHint">这是当前生效的 KV 密码（环境变量密码始终可用）</div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="new-password">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+                    </svg>
+                    <span data-i18n="security.newPassword">新密码</span>
+                </label>
+                <input type="password" id="new-password" class="form-input" placeholder="留空则不修改"
+                    data-i18n-placeholder="security.newPasswordPlaceholder">
+                <div class="form-hint" data-i18n="security.newPasswordHint">设置新的 KV 密码（环境变量密码作为兜底仍可登录）</div>
+            </div>
+
+            <button class="btn btn-secondary" onclick="updatePassword()" id="password-btn">
                 <svg viewBox="0 0 24 24">
                     <path
                         d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
                 </svg>
-                <span data-i18n="security.newPassword">新密码</span>
-            </label>
-            <input type="password" id="new-password" class="form-input" placeholder="留空则不修改"
-                data-i18n-placeholder="security.newPasswordPlaceholder">
-            <div class="form-hint" data-i18n="security.newPasswordHint">设置新的 KV 密码（环境变量密码作为兜底仍可登录）</div>
+                <span data-i18n="security.updatePassword">更新密码</span>
+            </button>
+
+            <div class="divider"></div>
+
+            <div class="section-title">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+                </svg>
+                <span data-i18n="security.checkTitle">安全检查</span>
+            </div>
+
+            <button class="btn btn-secondary" onclick="runSecurityCheck()" id="security-btn">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12zm-10 5h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+                <span data-i18n="security.runCheck">运行安全扫描</span>
+            </button>
+
+            <div id="security-results" class="security-results hidden"></div>
         </div>
 
-        <button class="btn btn-secondary" onclick="updatePassword()" id="password-btn">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-            </svg>
-            <span data-i18n="security.updatePassword">更新密码</span>
-        </button>
-
-        <div class="divider"></div>
-
-        <!-- 安全检查 -->
-        <div class="section-title">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-            </svg>
-            <span data-i18n="security.checkTitle">安全检查</span>
+        <div class="save-bar">
+            <button class="btn btn-primary" onclick="saveConfig()" id="save-btn">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+                </svg>
+                <span data-i18n="dashboard.save">保存更改</span>
+            </button>
+            <div id="message" class="message"></div>
         </div>
-
-        <button class="btn btn-secondary" onclick="runSecurityCheck()" id="security-btn">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M23 12l-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68L23 12zm-10 5h-2v-2h2v2zm0-4h-2V7h2v6z" />
-            </svg>
-            <span data-i18n="security.runCheck">运行安全扫描</span>
-        </button>
-
-        <div id="security-results" class="security-results hidden"></div>
     </div>
-
     <script>
         const i18n = {
             zh: {
                 login: { title: '管理面板', subtitle: 'EdgeOne 随机图片', password: '密码', passwordPlaceholder: '请输入管理密码', signIn: '登录', verifying: '验证中...', invalidPassword: '密码错误', networkError: '网络错误' },
                 dashboard: { title: '控制面板', publicAccess: '全局公开访问', publicAccessDesc: '允许任何人访问图片', whitelist: '白名单域名', whitelistPlaceholder: 'example.com, blog.me', whitelistHint: '逗号分隔的允许域名列表', publicImages: '公开图片', publicImagesPlaceholder: 'banner.jpg, logo.png', publicImagesHint: '这些图片将绕过防盗链保护', ddosMode: 'DDoS 防护模式', ddosModeDesc: '启用边缘缓存和严格检查', cacheTimeout: '缓存超时（秒）', save: '保存更改', saving: '保存中...', saved: '✓ 配置已保存', saveFailed: '保存失败: ', readOnly: '🔒 只读模式' },
+                tabs: { general: '常规设置', advanced: '高级设置', security: '安全中心' },
                 security: { title: '安全设置', currentPassword: '当前 KV 密码', currentPasswordHint: '这是当前生效的 KV 密码（环境变量密码始终可用）', newPassword: '新密码', newPasswordPlaceholder: '留空则不修改', newPasswordHint: '设置新的 KV 密码（环境变量密码作为兜底仍可登录）', updatePassword: '更新密码', updating: '更新中...', updated: '✓ 密码已更新', checkTitle: '安全检查', runCheck: '运行安全扫描', scanning: '扫描中...', noPassword: '(未设置)', masked: '******' },
                 securityCheck: { configExposed: '配置信息可能泄露', manifestExposed: '图片清单暴露', adminNoAuth: '管理 API 无需认证', allPassed: '✓ 所有安全检查通过', issuesFound: '发现问题' },
                 langName: 'English'
@@ -887,6 +989,7 @@
             en: {
                 login: { title: 'Admin Panel', subtitle: 'EdgeOne Random Photo', password: 'Password', passwordPlaceholder: 'Enter admin password', signIn: 'Sign In', verifying: 'Verifying...', invalidPassword: 'Invalid Password', networkError: 'Network Error' },
                 dashboard: { title: 'Dashboard', publicAccess: 'Global Public Access', publicAccessDesc: 'Allow anyone to access images', whitelist: 'Whitelist Domains', whitelistPlaceholder: 'example.com, blog.me', whitelistHint: 'Comma separated list of allowed domains', publicImages: 'Public Images', publicImagesPlaceholder: 'banner.jpg, logo.png', publicImagesHint: 'These images bypass hotlink protection', ddosMode: 'DDoS Defense Mode', ddosModeDesc: 'Enable edge caching and strict checks', cacheTimeout: 'Cache Timeout (Seconds)', save: 'Save Changes', saving: 'Saving...', saved: '✓ Configuration Saved', saveFailed: 'Failed: ', readOnly: '🔒 Read-Only' },
+                tabs: { general: 'General', advanced: 'Advanced', security: 'Security' },
                 security: { title: 'Security Settings', currentPassword: 'Current KV Password', currentPasswordHint: 'This is the active KV password (Env password always works)', newPassword: 'New Password', newPasswordPlaceholder: 'Leave empty to keep current', newPasswordHint: 'Set a new KV password (Env password remains as fallback)', updatePassword: 'Update Password', updating: 'Updating...', updated: '✓ Password Updated', checkTitle: 'Security Check', runCheck: 'Run Security Scan', scanning: 'Scanning...', noPassword: '(not set)', masked: '******' },
                 securityCheck: { configExposed: 'Config may be exposed', manifestExposed: 'Image manifest exposed', adminNoAuth: 'Admin API requires no auth', allPassed: '✓ All security checks passed', issuesFound: 'issues found' },
                 langName: '中文'
@@ -912,7 +1015,8 @@
                 if (val) el.textContent = val;
             });
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const val = texts[el.getAttribute('data-i18n-placeholder').split('.')[0]]?.[el.getAttribute('data-i18n-placeholder').split('.')[1]];
+                const val =
+                    texts[el.getAttribute('data-i18n-placeholder').split('.')[0]]?.[el.getAttribute('data-i18n-placeholder').split('.')[1]];
                 if (val) el.placeholder = val;
             });
         }
@@ -928,7 +1032,10 @@
             authToken = 'Bearer ' + pwd;
             const btn = document.getElementById('login-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('login.verifying')}</span>`;
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24">
+        <path
+            d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
+    </svg><span>${getText('login.verifying')}</span>`;
             btn.disabled = true;
             try {
                 const res = await fetch('/api/admin', { headers: { 'Authorization': authToken } });
@@ -949,6 +1056,7 @@
 
         function showDashboard(config) {
             currentConfig = config;
+            switchTab('general');
             document.getElementById('login-section').classList.add('hidden');
             const dash = document.getElementById('dashboard-section');
             dash.classList.remove('hidden');
@@ -971,7 +1079,9 @@
 
             const badge = document.getElementById('source-badge');
             if (config.kvBound && config.source === 'KV') { badge.textContent = 'KV Mode'; badge.className = 'badge success'; }
-            else if (config.kvBound && config.source === 'ENV') { badge.textContent = 'KV Ready'; badge.className = 'badge info'; }
+            else if (config.kvBound && config.source === 'ENV') {
+                badge.textContent = 'KV Ready'; badge.className = 'badge info';
+            }
             else { badge.textContent = 'Read-Only'; badge.className = 'badge danger'; }
             if (!config.kvBound) {
                 document.querySelectorAll('#dashboard-section input:not([readonly]), #dashboard-section textarea, #dashboard-section button').forEach(el => el.disabled = true);
@@ -985,10 +1095,10 @@
             passwordVisible = !passwordVisible;
             if (passwordVisible) {
                 pwdField.value = pwdField.dataset.realValue || getText('security.noPassword');
-                eyeIcon.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+                eyeIcon.innerHTML = `<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z" />`;
             } else {
                 pwdField.value = pwdField.dataset.realValue ? getText('security.masked') : getText('security.noPassword');
-                eyeIcon.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+                eyeIcon.innerHTML = `<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />`;
             }
         }
 
@@ -1000,7 +1110,7 @@
             }
             const btn = document.getElementById('password-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('security.updating')}</span>`;
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" /></svg><span>${getText('security.updating')}</span>`;
             btn.disabled = true;
             try {
                 const res = await fetch('/api/admin', {
@@ -1029,12 +1139,16 @@
         async function runSecurityCheck() {
             const btn = document.getElementById('security-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('security.scanning')}</span>`;
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" /></svg><span>${getText('security.scanning')}</span>`;
             btn.disabled = true;
 
             const results = [];
-            const checkIcon = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
-            const warnIcon = '<svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+            const checkIcon = `<svg viewBox="0 0 24 24">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+    </svg>`;
+            const warnIcon = `<svg viewBox="0 0 24 24">
+        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
+    </svg>`;
 
             // Check 1: Admin API without auth
             try {
@@ -1078,8 +1192,10 @@
             container.classList.remove('hidden');
             const allPassed = results.every(r => r.pass);
             container.innerHTML = results.map(r =>
-                `<div class="security-item ${r.pass ? 'pass' : 'fail'}">${r.pass ? checkIcon : warnIcon}<span>${r.text}</span></div>`
-            ).join('') + (allPassed ? `<div class="security-item pass">${checkIcon}<span>${getText('securityCheck.allPassed')}</span></div>` : '');
+                `<div class="security-item ${r.pass ? 'pass' : 'fail'}">${r.pass ? checkIcon : warnIcon}<span>${r.text}</span></div>
+    `
+            ).join('') + (allPassed ? `<div class="security-item pass">
+        ${checkIcon}<span>${getText('securityCheck.allPassed')}</span></div>` : '');
 
             btn.disabled = false;
             btn.innerHTML = originalHTML;
@@ -1088,7 +1204,10 @@
         async function saveConfig() {
             const btn = document.getElementById('save-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('dashboard.saving')}</span>`;
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24">
+        <path
+            d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z" />
+    </svg><span>${getText('dashboard.saving')}</span>`;
             btn.disabled = true;
             const data = {
                 publicAccess: document.getElementById('public-access').checked,
@@ -1098,7 +1217,12 @@
                 publicImages: document.getElementById('public-images').value.split(',').map(s => s.trim()).filter(s => s)
             };
             try {
-                const res = await fetch('/api/admin', { method: 'POST', headers: { 'Authorization': authToken, 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const res = await fetch('/api/admin', {
+                    method: 'POST', headers: {
+                        'Authorization': authToken, 'Content-Type':
+                            'application/json'
+                    }, body: JSON.stringify(data)
+                });
                 if (res.ok) { showMessage(getText('dashboard.saved'), 'success'); }
                 else { showMessage(getText('dashboard.saveFailed') + await res.text(), 'error'); }
             } catch (e) { showMessage(getText('login.networkError') + ': ' + e.message, 'error'); }
@@ -1113,6 +1237,18 @@
         }
 
         document.getElementById('password').addEventListener('keyup', e => { if (e.key === 'Enter') login(); });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabName));
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `tab-${tabName}`) {
+                    content.classList.add('active');
+                }
+            });
+        }
     </script>
 </body>
 
