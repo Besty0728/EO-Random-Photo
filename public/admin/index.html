@@ -5,101 +5,117 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EdgeOne Random Photo Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #007aff;
-            --primary-glow: rgba(0, 122, 255, 0.4);
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: rgba(255, 255, 255, 0.5);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --text-main: #1d1d1f;
-            --text-sec: #86868b;
-            --danger: #ff3b30;
-            --success: #34c759;
-            --bg-gradient-1: #667eea;
-            --bg-gradient-2: #764ba2;
-            --bg-gradient-3: #f093fb;
-            --bg-gradient-4: #f5576c;
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --glass-bg: rgba(30, 30, 32, 0.8);
-                --glass-border: rgba(255, 255, 255, 0.1);
-                --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-                --text-main: #f5f5f7;
-                --text-sec: #a1a1a6;
-                --bg-gradient-1: #1a1a2e;
-                --bg-gradient-2: #16213e;
-                --bg-gradient-3: #0f3460;
-                --bg-gradient-4: #533483;
-            }
-        }
-
-        * {
+        *,
+        *::before,
+        *::after {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-main);
-            overflow: hidden;
-            position: relative;
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #22d3ee;
+            --accent-pink: #f472b6;
+            --accent-orange: #fb923c;
+            --success: #34d399;
+            --danger: #f87171;
+            --glass-bg: rgba(255, 255, 255, 0.12);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --input-bg: rgba(255, 255, 255, 0.08);
+            --input-border: rgba(255, 255, 255, 0.12);
+            --radius: 16px;
+            --transition: 200ms ease;
         }
 
-        /* 动态渐变背景 */
-        .bg-gradient {
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            line-height: 1.5;
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+            background: #0f0f23;
+        }
+
+        /* Aurora 背景 */
+        .aurora-bg {
             position: fixed;
             inset: 0;
-            background: linear-gradient(-45deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3), var(--bg-gradient-4));
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(99, 102, 241, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 20%, rgba(34, 211, 238, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 70% 80%, rgba(244, 114, 182, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 30% at 30% 90%, rgba(251, 146, 60, 0.15) 0%, transparent 50%),
+                linear-gradient(180deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
             z-index: -2;
         }
 
-        @keyframes gradientShift {
-
-            0%,
-            100% {
-                background-position: 0% 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
+        /* SVG Mesh 装饰 */
+        .mesh-decoration {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.4;
+            pointer-events: none;
         }
 
-        /* 浮动装饰圆 */
-        .floating-orb {
+        /* 动态光斑 */
+        .glow-orb {
             position: fixed;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.5;
-            z-index: -1;
+            filter: blur(80px);
             animation: float 20s ease-in-out infinite;
+            pointer-events: none;
         }
 
         .orb-1 {
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 255, 255, 0.3);
-            top: -100px;
-            left: -100px;
+            width: 400px;
+            height: 400px;
+            background: rgba(99, 102, 241, 0.3);
+            top: -10%;
+            left: -5%;
         }
 
         .orb-2 {
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.2);
-            bottom: -150px;
-            right: -100px;
+            width: 350px;
+            height: 350px;
+            background: rgba(34, 211, 238, 0.25);
+            bottom: -15%;
+            right: -5%;
             animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 300px;
+            height: 300px;
+            background: rgba(244, 114, 182, 0.2);
+            top: 50%;
+            right: 20%;
+            animation-delay: -14s;
         }
 
         @keyframes float {
@@ -110,260 +126,383 @@
             }
 
             33% {
-                transform: translate(30px, -30px) scale(1.05);
+                transform: translate(20px, -30px) scale(1.05);
             }
 
             66% {
-                transform: translate(-20px, 20px) scale(0.95);
+                transform: translate(-15px, 20px) scale(0.95);
             }
         }
 
-        .container {
-            width: 90%;
-            max-width: 520px;
+        /* 玻璃卡片 */
+        .card {
+            width: 100%;
+            max-width: 440px;
             background: var(--glass-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            padding: 2.5rem;
-            border-radius: 28px;
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
             border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 36px;
             box-shadow: var(--glass-shadow);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .container:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        /* 卡片彩虹边框 */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius);
+            padding: 1px;
+            background: linear-gradient(135deg, var(--primary), var(--accent), var(--accent-pink), var(--accent-orange));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            pointer-events: none;
         }
 
-        /* Logo 区域 */
-        .logo-section {
+        /* 头部 */
+        .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 28px;
         }
 
-        .logo-icon {
+        .logo {
             width: 64px;
             height: 64px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, var(--primary), #5856d6);
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 16px var(--primary-glow);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
         }
 
-        .logo-icon svg {
-            width: 36px;
-            height: 36px;
+        .logo svg {
+            width: 32px;
+            height: 32px;
             fill: white;
         }
 
-        h1 {
+        .header h1 {
             font-size: 22px;
             font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, var(--text-main), var(--text-sec));
+            margin-bottom: 4px;
+            background: linear-gradient(90deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .subtitle {
-            font-size: 13px;
-            color: var(--text-sec);
-            margin-top: 4px;
+        .header p {
+            font-size: 14px;
+            color: var(--text-secondary);
         }
 
-        .input-group {
-            margin-bottom: 1.25rem;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 12px;
+        /* Badge */
+        .badge {
+            display: inline-flex;
+            padding: 5px 12px;
+            font-size: 11px;
             font-weight: 600;
-            color: var(--text-sec);
-            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border-radius: 20px;
+            margin-left: 8px;
+            vertical-align: middle;
         }
 
-        label svg {
-            width: 14px;
-            height: 14px;
-            fill: currentColor;
-            opacity: 0.7;
+        .badge.success {
+            background: rgba(52, 211, 153, 0.2);
+            color: var(--success);
         }
 
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        textarea {
-            width: 100%;
-            padding: 14px 16px;
-            border: 2px solid transparent;
-            background: rgba(120, 120, 128, 0.08);
-            border-radius: 14px;
-            font-size: 15px;
-            color: var(--text-main);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            font-family: inherit;
+        .badge.danger {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--danger);
         }
 
-        input:hover,
-        textarea:hover {
-            background: rgba(120, 120, 128, 0.12);
+        .badge.info {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary-light);
         }
 
-        input:focus,
-        textarea:focus {
-            outline: none;
-            background: rgba(120, 120, 128, 0.05);
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--primary-glow);
+        .badge.loading {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 90px;
-            line-height: 1.5;
+        /* 表单 */
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .switch-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 16px;
-            margin-bottom: 1rem;
-            background: rgba(120, 120, 128, 0.06);
-            border-radius: 14px;
-            transition: background 0.2s;
-        }
-
-        .switch-row:hover {
-            background: rgba(120, 120, 128, 0.1);
-        }
-
-        .switch-label {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-
-        .switch-title {
+        .form-label {
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .form-label svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+            opacity: 0.8;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
             font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
+            color: var(--text-primary);
+            font-family: inherit;
+            outline: none;
+            transition: all var(--transition);
         }
 
-        .switch-title svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--primary);
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
         }
 
-        .switch-desc {
+        .form-input:hover,
+        .form-textarea:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-hint {
             font-size: 12px;
-            color: var(--text-sec);
-            font-weight: 400;
-            padding-left: 26px;
+            color: var(--text-muted);
+            margin-top: 6px;
         }
 
-        /* iOS 风格开关 */
+        /* Toggle */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all var(--transition);
+        }
+
+        .toggle-row:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-info {
+            flex: 1;
+        }
+
+        .toggle-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .toggle-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
         .toggle-switch {
             position: relative;
-            width: 52px;
-            height: 32px;
+            width: 48px;
+            height: 26px;
             appearance: none;
-            background: rgba(120, 120, 128, 0.24);
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 13px;
             cursor: pointer;
-            outline: none;
+            transition: all var(--transition);
             flex-shrink: 0;
+            margin-left: 12px;
+            border: none;
+            outline: none;
         }
 
         .toggle-switch::after {
             content: '';
             position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 28px;
-            height: 28px;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
             background: white;
             border-radius: 50%;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-switch:checked {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--accent));
         }
 
         .toggle-switch:checked::after {
-            transform: translateX(20px);
+            transform: translateX(22px);
         }
 
-        .toggle-switch:focus {
-            box-shadow: 0 0 0 4px var(--primary-glow);
+        .toggle-switch:focus-visible {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
         }
 
+        /* 分隔线 */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+            margin: 24px 0;
+        }
+
+        /* 按钮 */
         .btn {
             width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 16px;
-            font-size: 16px;
+            padding: 14px 24px;
+            font-size: 14px;
             font-weight: 600;
+            font-family: inherit;
+            border: none;
+            border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            transition: all var(--transition);
+            outline: none;
         }
 
         .btn svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             fill: currentColor;
         }
 
-        .btn:active {
-            transform: scale(0.98);
-        }
-
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), #5856d6);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
-            box-shadow: 0 4px 16px var(--primary-glow);
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
         }
 
         .btn-primary:hover {
-            box-shadow: 0 6px 24px var(--primary-glow);
-            transform: translateY(-1px);
+            box-shadow: 0 6px 24px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
         }
 
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:focus-visible {
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3), 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* 消息 */
+        .message {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-top: 16px;
+            min-height: 20px;
+        }
+
+        .message.success {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--success);
+        }
+
+        .message.error {
+            background: rgba(248, 113, 113, 0.15);
+            color: var(--danger);
+        }
+
+        /* 语言切换 */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 18px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+        }
+
+        .lang-switch svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .lang-switch:hover {
+            color: var(--text-primary);
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* 隐藏 */
         .hidden {
-            display: none;
-            opacity: 0;
+            display: none !important;
         }
 
+        /* 动画 */
         .fade-in {
-            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: fadeIn 0.4s ease-out;
         }
 
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: translateY(16px) scale(0.98);
+                transform: translateY(12px) scale(0.98);
             }
 
             to {
@@ -372,238 +511,181 @@
             }
         }
 
-        #message {
-            margin-top: 1rem;
-            text-align: center;
-            font-size: 14px;
-            min-height: 24px;
-            padding: 8px;
-            border-radius: 10px;
-            transition: all 0.3s;
-        }
-
-        .success {
-            color: var(--success);
-            background: rgba(52, 199, 89, 0.1);
-        }
-
-        .error {
-            color: var(--danger);
-            background: rgba(255, 59, 48, 0.1);
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            font-weight: 600;
-            background: rgba(120, 120, 128, 0.1);
-            color: var(--text-sec);
-            margin-left: 8px;
-            text-transform: uppercase;
-        }
-
-        .section-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
-            margin: 1.5rem 0;
-        }
-
-        .hint-text {
-            font-size: 11px;
-            color: var(--text-sec);
-            margin-top: 6px;
-            padding-left: 2px;
-        }
-
-        /* 骨架加载动画 */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(120, 120, 128, 0.1) 25%, rgba(120, 120, 128, 0.2) 50%, rgba(120, 120, 128, 0.1) 75%);
-            background-size: 200% 100%;
-            animation: skeleton 1.5s infinite;
-            border-radius: 8px;
-        }
-
-        @keyframes skeleton {
-            0% {
-                background-position: 200% 0;
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
             }
+        }
 
-            100% {
-                background-position: -200% 0;
-            }
+        .spinner {
+            animation: spin 0.8s linear infinite;
         }
 
         /* 响应式 */
         @media (max-width: 480px) {
-            .container {
-                padding: 1.75rem;
-                border-radius: 24px;
+            body {
+                padding: 16px;
             }
 
-            .logo-icon {
-                width: 56px;
-                height: 56px;
+            .card {
+                padding: 28px 24px;
             }
 
-            h1 {
-                font-size: 20px;
+            .form-input,
+            .form-textarea,
+            .btn {
+                font-size: 16px;
             }
-        }
-        /* 语言切换按钮 */
-        .lang-switch {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-sec);
-            transition: all 0.2s;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: var(--glass-shadow);
-        }
-        .lang-switch:hover {
-            color: var(--primary);
-            background: rgba(255, 255, 255, 0.9);
-            transform: translateY(-1px);
         }
     </style>
 </head>
 
 <body>
-    <!-- 动态背景 -->
-    <div class="bg-gradient"></div>
-    <div class="floating-orb orb-1"></div>
-    <div class="floating-orb orb-2"></div>
+    <!-- Aurora 背景 -->
+    <div class="aurora-bg"></div>
+
+    <!-- SVG Mesh 装饰 -->
+    <svg class="mesh-decoration" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <linearGradient id="meshGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#6366f1;stop-opacity:0.3" />
+                <stop offset="50%" style="stop-color:#22d3ee;stop-opacity:0.2" />
+                <stop offset="100%" style="stop-color:#f472b6;stop-opacity:0.3" />
+            </linearGradient>
+            <linearGradient id="meshGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#fb923c;stop-opacity:0.2" />
+                <stop offset="100%" style="stop-color:#6366f1;stop-opacity:0.2" />
+            </linearGradient>
+        </defs>
+        <path d="M0,150 Q200,100 400,150 T800,150 L800,0 L0,0 Z" fill="url(#meshGradient1)">
+            <animate attributeName="d" dur="15s" repeatCount="indefinite" values="M0,150 Q200,100 400,150 T800,150 L800,0 L0,0 Z;
+                        M0,120 Q200,180 400,120 T800,180 L800,0 L0,0 Z;
+                        M0,150 Q200,100 400,150 T800,150 L800,0 L0,0 Z" />
+        </path>
+        <path d="M0,600 Q200,500 400,550 T800,500 L800,600 L0,600 Z" fill="url(#meshGradient2)">
+            <animate attributeName="d" dur="18s" repeatCount="indefinite" values="M0,600 Q200,500 400,550 T800,500 L800,600 L0,600 Z;
+                        M0,600 Q200,550 400,480 T800,520 L800,600 L0,600 Z;
+                        M0,600 Q200,500 400,550 T800,500 L800,600 L0,600 Z" />
+        </path>
+        <circle cx="100" cy="100" r="80" fill="url(#meshGradient1)" opacity="0.3">
+            <animate attributeName="cy" dur="12s" values="100;150;100" repeatCount="indefinite" />
+        </circle>
+        <circle cx="700" cy="450" r="60" fill="url(#meshGradient2)" opacity="0.25">
+            <animate attributeName="cx" dur="14s" values="700;650;700" repeatCount="indefinite" />
+        </circle>
+    </svg>
+
+    <!-- 动态光斑 -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
 
     <!-- 语言切换 -->
-    <button class="lang-switch" onclick="toggleLanguage()" id="lang-btn">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+    <button class="lang-switch" onclick="toggleLanguage()" aria-label="切换语言">
+        <svg viewBox="0 0 24 24">
+            <path
+                d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
         </svg>
         <span id="lang-text">English</span>
     </button>
 
-    <!-- 登录区域 -->
-    <div class="container" id="login-section">
-        <div class="logo-section">
-            <div class="logo-icon">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+    <!-- 登录 -->
+    <div class="card" id="login-section">
+        <div class="header">
+            <div class="logo">
+                <svg viewBox="0 0 24 24">
                     <path
                         d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
                 </svg>
             </div>
             <h1 data-i18n="login.title">管理面板</h1>
-            <p class="subtitle" data-i18n="login.subtitle">EdgeOne 随机图片</p>
+            <p data-i18n="login.subtitle">EdgeOne 随机图片</p>
         </div>
 
-        <div class="input-group">
-            <label>
+        <div class="form-group">
+            <label class="form-label" for="password">
                 <svg viewBox="0 0 24 24">
                     <path
                         d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
                 </svg>
                 <span data-i18n="login.password">密码</span>
             </label>
-            <input type="password" id="password" placeholder="请输入管理密码" data-i18n-placeholder="login.passwordPlaceholder" autocomplete="current-password">
+            <input type="password" id="password" class="form-input" placeholder="请输入管理密码"
+                data-i18n-placeholder="login.passwordPlaceholder" autocomplete="current-password">
         </div>
 
-        <button class="btn btn-primary" onclick="login()">
+        <button class="btn btn-primary" onclick="login()" id="login-btn">
             <svg viewBox="0 0 24 24">
                 <path
                     d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" />
             </svg>
             <span data-i18n="login.signIn">登录</span>
         </button>
-        <div id="login-msg" class="error" style="text-align:center; margin-top:12px;"></div>
+        <div id="login-msg" class="message"></div>
     </div>
 
-    <!-- Dashboard 区域 -->
-    <div class="container hidden" id="dashboard-section">
-        <div class="logo-section" style="margin-bottom: 1.5rem;">
-            <h1><span data-i18n="dashboard.title">控制面板</span> <span id="source-badge" class="badge" data-i18n="dashboard.loading">加载中...</span></h1>
+    <!-- Dashboard -->
+    <div class="card hidden" id="dashboard-section">
+        <div class="header" style="margin-bottom: 24px;">
+            <h1>
+                <span data-i18n="dashboard.title">控制面板</span>
+                <span id="source-badge" class="badge loading">Loading</span>
+            </h1>
         </div>
 
-        <div class="switch-row">
-            <div class="switch-label">
-                <span class="switch-title">
-                    <svg viewBox="0 0 24 24">
-                        <path
-                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-                    </svg>
-                    <span data-i18n="dashboard.publicAccess">全局公开访问</span>
-                </span>
-                <span class="switch-desc" data-i18n="dashboard.publicAccessDesc">允许任何人访问图片</span>
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <div class="toggle-title" data-i18n="dashboard.publicAccess">全局公开访问</div>
+                <div class="toggle-desc" data-i18n="dashboard.publicAccessDesc">允许任何人访问图片</div>
             </div>
             <input type="checkbox" id="public-access" class="toggle-switch">
         </div>
 
-        <div class="input-group">
-            <label>
+        <div class="form-group">
+            <label class="form-label" for="whitelist">
                 <svg viewBox="0 0 24 24">
                     <path
                         d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
                 </svg>
                 <span data-i18n="dashboard.whitelist">白名单域名</span>
             </label>
-            <input type="text" id="whitelist" placeholder="example.com, blog.me" data-i18n-placeholder="dashboard.whitelistPlaceholder">
-            <p class="hint-text" data-i18n="dashboard.whitelistHint">逗号分隔的允许域名列表</p>
+            <input type="text" id="whitelist" class="form-input" placeholder="example.com, blog.me"
+                data-i18n-placeholder="dashboard.whitelistPlaceholder">
+            <div class="form-hint" data-i18n="dashboard.whitelistHint">逗号分隔的允许域名列表</div>
         </div>
 
-        <div class="input-group">
-            <label>
+        <div class="form-group">
+            <label class="form-label" for="public-images">
                 <svg viewBox="0 0 24 24">
                     <path
                         d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
                 </svg>
                 <span data-i18n="dashboard.publicImages">公开图片</span>
             </label>
-            <textarea id="public-images" placeholder="banner.jpg, logo.png" data-i18n-placeholder="dashboard.publicImagesPlaceholder"></textarea>
-            <p class="hint-text" data-i18n="dashboard.publicImagesHint">这些图片将绕过防盗链保护</p>
+            <textarea id="public-images" class="form-textarea" placeholder="banner.jpg, logo.png"
+                data-i18n-placeholder="dashboard.publicImagesPlaceholder"></textarea>
+            <div class="form-hint" data-i18n="dashboard.publicImagesHint">这些图片将绕过防盗链保护</div>
         </div>
 
-        <div class="section-divider"></div>
+        <div class="divider"></div>
 
-        <div class="switch-row">
-            <div class="switch-label">
-                <span class="switch-title">
-                    <svg viewBox="0 0 24 24">
-                        <path
-                            d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-                    </svg>
-                    <span data-i18n="dashboard.ddosMode">DDoS 防护模式</span>
-                </span>
-                <span class="switch-desc" data-i18n="dashboard.ddosModeDesc">启用边缘缓存和严格检查</span>
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <div class="toggle-title" data-i18n="dashboard.ddosMode">DDoS 防护模式</div>
+                <div class="toggle-desc" data-i18n="dashboard.ddosModeDesc">启用边缘缓存和严格检查</div>
             </div>
             <input type="checkbox" id="ddos-mode" class="toggle-switch">
         </div>
 
-        <div class="input-group" id="cache-group">
-            <label>
+        <div class="form-group">
+            <label class="form-label" for="ddos-cache">
                 <svg viewBox="0 0 24 24">
                     <path
                         d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
                 </svg>
                 <span data-i18n="dashboard.cacheTimeout">缓存超时（秒）</span>
             </label>
-            <input type="number" id="ddos-cache" value="5" min="1" max="60">
+            <input type="number" id="ddos-cache" class="form-input" value="5" min="1" max="60">
         </div>
 
         <button class="btn btn-primary" onclick="saveConfig()" id="save-btn">
@@ -613,75 +695,19 @@
             </svg>
             <span data-i18n="dashboard.save">保存更改</span>
         </button>
-        <div id="message"></div>
+        <div id="message" class="message"></div>
     </div>
 
     <script>
         const i18n = {
             zh: {
-                login: {
-                    title: '管理面板',
-                    subtitle: 'EdgeOne 随机图片',
-                    password: '密码',
-                    passwordPlaceholder: '请输入管理密码',
-                    signIn: '登录',
-                    verifying: '验证中...',
-                    invalidPassword: '密码错误',
-                    networkError: '网络错误'
-                },
-                dashboard: {
-                    title: '控制面板',
-                    loading: '加载中...',
-                    publicAccess: '全局公开访问',
-                    publicAccessDesc: '允许任何人访问图片',
-                    whitelist: '白名单域名',
-                    whitelistPlaceholder: 'example.com, blog.me',
-                    whitelistHint: '逗号分隔的允许域名列表',
-                    publicImages: '公开图片',
-                    publicImagesPlaceholder: 'banner.jpg, logo.png',
-                    publicImagesHint: '这些图片将绕过防盗链保护',
-                    ddosMode: 'DDoS 防护模式',
-                    ddosModeDesc: '启用边缘缓存和严格检查',
-                    cacheTimeout: '缓存超时（秒）',
-                    save: '保存更改',
-                    saving: '保存中...',
-                    saved: '✓ 配置已保存！',
-                    saveFailed: '保存失败: ',
-                    readOnly: '🔒 只读模式（环境变量配置）'
-                },
-                langName: 'English' // 切换按钮显示的文字（Target Language）
+                login: { title: '管理面板', subtitle: 'EdgeOne 随机图片', password: '密码', passwordPlaceholder: '请输入管理密码', signIn: '登录', verifying: '验证中...', invalidPassword: '密码错误', networkError: '网络错误' },
+                dashboard: { title: '控制面板', publicAccess: '全局公开访问', publicAccessDesc: '允许任何人访问图片', whitelist: '白名单域名', whitelistPlaceholder: 'example.com, blog.me', whitelistHint: '逗号分隔的允许域名列表', publicImages: '公开图片', publicImagesPlaceholder: 'banner.jpg, logo.png', publicImagesHint: '这些图片将绕过防盗链保护', ddosMode: 'DDoS 防护模式', ddosModeDesc: '启用边缘缓存和严格检查', cacheTimeout: '缓存超时（秒）', save: '保存更改', saving: '保存中...', saved: '✓ 配置已保存', saveFailed: '保存失败: ', readOnly: '🔒 只读模式' },
+                langName: 'English'
             },
             en: {
-                login: {
-                    title: 'Admin Panel',
-                    subtitle: 'EdgeOne Random Photo',
-                    password: 'Password',
-                    passwordPlaceholder: 'Enter admin password',
-                    signIn: 'Sign In',
-                    verifying: 'Verifying...',
-                    invalidPassword: 'Invalid Password',
-                    networkError: 'Network Error',
-                },
-                dashboard: {
-                    title: 'Dashboard',
-                    loading: 'Loading...',
-                    publicAccess: 'Global Public Access',
-                    publicAccessDesc: 'Allow anyone to access images',
-                    whitelist: 'Whitelist Domains',
-                    whitelistPlaceholder: 'example.com, blog.me',
-                    whitelistHint: 'Comma separated list of allowed domains',
-                    publicImages: 'Public Images',
-                    publicImagesPlaceholder: 'banner.jpg, logo.png',
-                    publicImagesHint: 'These images bypass hotlink protection',
-                    ddosMode: 'DDoS Defense Mode',
-                    ddosModeDesc: 'Enable edge caching and strict checks',
-                    cacheTimeout: 'Cache Timeout (Seconds)',
-                    save: 'Save Changes',
-                    saving: 'Saving...',
-                    saved: '✓ Configuration Saved!',
-                    saveFailed: 'Failed: ',
-                    readOnly: '🔒 Read-Only (Environment Variables)'
-                },
+                login: { title: 'Admin Panel', subtitle: 'EdgeOne Random Photo', password: 'Password', passwordPlaceholder: 'Enter admin password', signIn: 'Sign In', verifying: 'Verifying...', invalidPassword: 'Invalid Password', networkError: 'Network Error' },
+                dashboard: { title: 'Dashboard', publicAccess: 'Global Public Access', publicAccessDesc: 'Allow anyone to access images', whitelist: 'Whitelist Domains', whitelistPlaceholder: 'example.com, blog.me', whitelistHint: 'Comma separated list of allowed domains', publicImages: 'Public Images', publicImagesPlaceholder: 'banner.jpg, logo.png', publicImagesHint: 'These images bypass hotlink protection', ddosMode: 'DDoS Defense Mode', ddosModeDesc: 'Enable edge caching and strict checks', cacheTimeout: 'Cache Timeout (Seconds)', save: 'Save Changes', saving: 'Saving...', saved: '✓ Configuration Saved', saveFailed: 'Failed: ', readOnly: '🔒 Read-Only' },
                 langName: '中文'
             }
         };
@@ -689,7 +715,6 @@
         let currentLang = localStorage.getItem('admin_lang') || 'zh';
         let authToken = '';
 
-        // 初始化语言
         setLanguage(currentLang);
 
         function toggleLanguage() {
@@ -700,71 +725,42 @@
 
         function setLanguage(lang) {
             const texts = i18n[lang];
-            
-            // 更新切换按钮文本
-            document.getElementById('lang-text').innerText = texts.langName;
-
-            // 更新所有带有 data-i18n 的元素
+            document.getElementById('lang-text').textContent = texts.langName;
             document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const val = getNestedValue(texts, key);
-                if (val) el.innerText = val;
+                const val = texts[el.getAttribute('data-i18n').split('.')[0]]?.[el.getAttribute('data-i18n').split('.')[1]];
+                if (val) el.textContent = val;
             });
-
-            // 更新 placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-                const key = el.getAttribute('data-i18n-placeholder');
-                const val = getNestedValue(texts, key);
+                const val = texts[el.getAttribute('data-i18n-placeholder').split('.')[0]]?.[el.getAttribute('data-i18n-placeholder').split('.')[1]];
                 if (val) el.placeholder = val;
             });
         }
 
-        function getNestedValue(obj, path) {
-            return path.split('.').reduce((prev, curr) => prev ? prev[curr] : null, obj);
-        }
-
         function getText(key) {
-             return getNestedValue(i18n[currentLang], key);
+            const [section, prop] = key.split('.');
+            return i18n[currentLang][section]?.[prop];
         }
 
         async function login() {
             const pwd = document.getElementById('password').value;
             if (!pwd) return;
-
             authToken = 'Bearer ' + pwd;
-
-            const btn = document.querySelector('#login-section .btn');
+            const btn = document.getElementById('login-btn');
             const originalHTML = btn.innerHTML;
-            // 这里的 Verifying... 也需要国际化，但为了保留 SVG 动画，我们只替换文本节点
-            // 不过更简单的方式是每次都重置innerHTML
-            
-            const verifyingText = getText('login.verifying');
-            
-            btn.innerHTML = '<svg class="spinner" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>' + ' ' + verifyingText;
-            btn.classList.add('loading');
-
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('login.verifying')}</span>`;
+            btn.disabled = true;
             try {
-                const res = await fetch('/api/admin', {
-                    headers: { 'Authorization': authToken }
-                });
+                const res = await fetch('/api/admin', { headers: { 'Authorization': authToken } });
+                if (res.ok) { showDashboard(await res.json()); }
+                else { showLoginMsg(getText('login.invalidPassword'), 'error'); authToken = ''; }
+            } catch (e) { showLoginMsg(getText('login.networkError'), 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalHTML; }
+        }
 
-                if (res.ok) {
-                    const config = await res.json();
-                    showDashboard(config);
-                } else {
-                    document.getElementById('login-msg').innerText = getText('login.invalidPassword');
-                    authToken = '';
-                }
-            } catch (e) {
-                document.getElementById('login-msg').innerText = getText('login.networkError');
-            } finally {
-                // 恢复原始按钮内容，并确保文本正确
-                btn.classList.remove('loading');
-                // 因为 login() 执行完可能语言已经切换了（虽然不太可能在 login 过程中切换），
-                // 最好是重新渲染按钮内容
-                const signInText = getText('login.signIn');
-                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z" /></svg> ' + `<span data-i18n="login.signIn">${signInText}</span>`;
-            }
+        function showLoginMsg(msg, type) {
+            const el = document.getElementById('login-msg');
+            el.textContent = msg;
+            el.className = 'message ' + type;
         }
 
         function showDashboard(config) {
@@ -772,105 +768,49 @@
             const dash = document.getElementById('dashboard-section');
             dash.classList.remove('hidden');
             dash.classList.add('fade-in');
-
             document.getElementById('public-access').checked = config.publicAccess;
             document.getElementById('whitelist').value = config.whitelist.join(', ');
             document.getElementById('ddos-mode').checked = config.ddosMode;
             document.getElementById('ddos-cache').value = config.ddosCacheTimeout;
             document.getElementById('public-images').value = (config.publicImages || []).join(', ');
-
             const badge = document.getElementById('source-badge');
-            // 根据 kvBound 和 source 组合显示更准确的状态
-            if (config.kvBound && config.source === 'KV') {
-                badge.innerText = 'KV Mode';
-                badge.style.background = 'rgba(52, 199, 89, 0.15)';
-                badge.style.color = 'var(--success)';
-            } else if (config.kvBound && config.source === 'ENV') {
-                // KV 已绑定但数据为空，保存后将切换为 KV Mode
-                badge.innerText = 'KV Ready';
-                badge.style.background = 'rgba(0, 122, 255, 0.15)';
-                badge.style.color = 'var(--primary)';
-            } else {
-                badge.innerText = 'Read-Only';
-                badge.style.background = 'rgba(255, 59, 48, 0.15)';
-                badge.style.color = 'var(--danger)';
-            }
-            
-            // 关键修复：根据 kvBound 判断是否禁用，而非 source
-            // 即使 source 是 ENV，只要 kvBound 为 true，就允许编辑并初始化 KV
+            if (config.kvBound && config.source === 'KV') { badge.textContent = 'KV Mode'; badge.className = 'badge success'; }
+            else if (config.kvBound && config.source === 'ENV') { badge.textContent = 'KV Ready'; badge.className = 'badge info'; }
+            else { badge.textContent = 'Read-Only'; badge.className = 'badge danger'; }
             if (!config.kvBound) {
-                const elements = document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button:not(.lang-switch)');
-                elements.forEach(el => el.disabled = true);
+                document.querySelectorAll('#dashboard-section input, #dashboard-section textarea, #dashboard-section button').forEach(el => el.disabled = true);
                 showMessage(getText('dashboard.readOnly'), '');
-                document.getElementById('message').style.color = 'var(--text-sec)';
-                document.getElementById('message').style.background = 'transparent';
             }
         }
 
         async function saveConfig() {
             const btn = document.getElementById('save-btn');
-            const savingText = getText('dashboard.saving');
-            
-            btn.innerHTML = '<svg viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg> ' + savingText;
-            btn.classList.add('loading');
-
-            const publicAccess = document.getElementById('public-access').checked;
-            const whitelistStr = document.getElementById('whitelist').value;
-            const whitelist = whitelistStr.split(',').map(s => s.trim()).filter(s => s);
-
-            const ddosMode = document.getElementById('ddos-mode').checked;
-            const ddosCacheTimeout = parseInt(document.getElementById('ddos-cache').value);
-
-            const publicImagesStr = document.getElementById('public-images').value;
-            const publicImages = publicImagesStr.split(',').map(s => s.trim()).filter(s => s);
-
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<svg class="spinner" viewBox="0 0 24 24"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg><span>${getText('dashboard.saving')}</span>`;
+            btn.disabled = true;
+            const data = {
+                publicAccess: document.getElementById('public-access').checked,
+                whitelist: document.getElementById('whitelist').value.split(',').map(s => s.trim()).filter(s => s),
+                ddosMode: document.getElementById('ddos-mode').checked,
+                ddosCacheTimeout: parseInt(document.getElementById('ddos-cache').value),
+                publicImages: document.getElementById('public-images').value.split(',').map(s => s.trim()).filter(s => s)
+            };
             try {
-                const res = await fetch('/api/admin', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': authToken,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ publicAccess, whitelist, ddosMode, ddosCacheTimeout, publicImages })
-                });
-
-                if (res.ok) {
-                    showMessage(getText('dashboard.saved'), 'success');
-                } else {
-                    const msg = await res.text();
-                    showMessage(getText('dashboard.saveFailed') + msg, 'error');
-                }
-            } catch (e) {
-                showMessage(getText('login.networkError') + ': ' + e.message, 'error');
-            } finally {
-                btn.classList.remove('loading');
-                const saveText = getText('dashboard.save');
-                btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" /></svg> ' + `<span data-i18n="dashboard.save">${saveText}</span>`;
-            }
+                const res = await fetch('/api/admin', { method: 'POST', headers: { 'Authorization': authToken, 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                if (res.ok) { showMessage(getText('dashboard.saved'), 'success'); }
+                else { showMessage(getText('dashboard.saveFailed') + await res.text(), 'error'); }
+            } catch (e) { showMessage(getText('login.networkError') + ': ' + e.message, 'error'); }
+            finally { btn.disabled = false; btn.innerHTML = originalHTML; }
         }
 
         function showMessage(msg, type) {
             const el = document.getElementById('message');
-            el.innerText = msg;
-            el.className = type;
-            if (type) {
-                setTimeout(() => {
-                    el.innerText = '';
-                    el.className = '';
-                }, 3000);
-            }
+            el.textContent = msg;
+            el.className = 'message ' + (type || '');
+            if (type) setTimeout(() => { el.textContent = ''; el.className = 'message'; }, 3000);
         }
 
-        document.getElementById('password').addEventListener('keyup', function (event) {
-            if (event.key === 'Enter') {
-                login();
-            }
-        });
-
-        // 添加 spin 动画
-        const style = document.createElement('style');
-        style.textContent = '@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }';
-        document.head.appendChild(style);
+        document.getElementById('password').addEventListener('keyup', e => { if (e.key === 'Enter') login(); });
     </script>
 </body>
 
