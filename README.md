@@ -13,13 +13,13 @@ A high-performance, secure, and customizable Random Photo API built on **Tencent
 *   **🔒 Smart Hotlink Protection**:
     *   **Global Protection**: Protects both the API and static image resources.
     *   **Whitelist**: Only authorized domains can access your resources.
-    *   **Public Images**: designate specific images as "Public" for universal access.
+    *   **Public Images**: Designate specific images as "Public" for universal access.
 *   **🖼️ High-Fidelity Compression**: Built-in FFmpeg script for generating ultra-low size, high-quality WebP images (`-q 75 -m 6`).
 *   **🛡️ DDoS Defense Mode**: Enables micro-caching on CDN nodes to withstand high-concurrency attacks (10k+ QPS).
 *   **⚙️ Hybrid Configuration**:
     *   **KV Mode**: Real-time configuration updates via a visual admin panel.
     *   **Env Mode**: Read-only configuration via Environment Variables (for users without KV).
-*   **🌍 Multi-language Dashboard**: Built-in minimalist admin panel with **CN/EN i18n** support.
+*   **🎨 Aurora Admin Panel**: Built with Aurora UI + Glassmorphism design language, featuring **CN/EN i18n** support.
 
 ---
 
@@ -70,7 +70,7 @@ Add these variables in EdgeOne Pages settings:
 ### Method B: KV Storage (Read/Write)
 1.  Create a KV Namespace (any name, e.g., `Random`) in the console.
 2.  Bind it to `EO_KV` in Pages Settings -> **Functions Binding**.
-3.  **First-time setup**: Access `https://your-domain/admin/index.html` and login with `ADMIN_PASSWORD` from Env Vars.
+3.  **First-time setup**: Access `https://your-domain/admin/` and login with `ADMIN_PASSWORD` from Env Vars.
 4.  Save any configuration to activate KV mode.
 
 > **🔐 Hybrid Password**: The `ADMIN_PASSWORD` environment variable serves as a **permanent fallback**. Even if you set a new password in KV, the original Env password still works. This ensures account recovery.
@@ -156,6 +156,7 @@ When enabled:
 │   ├── _middleware.ts    # Global Access Control & CORS
 │   ├── random.ts         # Random Image Logic
 │   ├── health.ts         # Health Check Endpoint
+│   ├── env.d.ts          # TypeScript Type Definitions
 │   ├── api/
 │   │   └── admin.ts      # Admin API
 │   ├── data/
@@ -163,7 +164,7 @@ When enabled:
 │   └── utils/
 │       └── config.ts     # Config Loader (KV/Env)
 ├── public/
-│   ├── admin/            # Admin Dashboard
+│   ├── admin/            # Aurora UI Admin Dashboard
 │   └── images/           # Image Assets
 ├── scripts/              # Build Scripts
 └── package.json
