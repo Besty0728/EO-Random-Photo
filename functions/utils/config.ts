@@ -2,6 +2,7 @@ export interface Config {
     publicAccess: boolean;
     whitelist: string[];
     adminPassword?: string;
+    fallbackPassword?: string; // 环境变量中的兜底密码，始终可用于登录
     source: 'KV' | 'ENV';
     ddosMode: boolean;
     ddosCacheTimeout: number; // in seconds
@@ -44,7 +45,9 @@ export async function getConfig(env: Env): Promise<Config> {
                 return {
                     ...DEFAULT_CONFIG,
                     ...parsed,
-                    source: 'KV'
+                    source: 'KV',
+                    // 始终保留环境变量密码作为兜底（即使 KV 中有密码）
+                    fallbackPassword: env.ADMIN_PASSWORD
                 };
             }
         } catch (e) {

@@ -12,7 +12,13 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 
     const currentConfig = await getConfig(env);
 
-    if (currentConfig.adminPassword && providedPass !== currentConfig.adminPassword) {
+    // 双密码验证：KV 密码或环境变量密码均可登录
+    const isPasswordValid = providedPass && (
+        providedPass === currentConfig.adminPassword ||
+        providedPass === currentConfig.fallbackPassword
+    );
+
+    if (currentConfig.adminPassword && !isPasswordValid) {
         return new Response('Unauthorized', { status: 401 });
     }
 

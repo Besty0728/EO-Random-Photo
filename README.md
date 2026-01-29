@@ -68,9 +68,12 @@ Add these variables in EdgeOne Pages settings:
 | `EO_PUBLIC_IMAGES` | String | `banner.jpg,logo.png` | **Public Images List**. These files bypass hotlink protection. |
 
 ### Method B: KV Storage (Read/Write)
-1.  Create a KV Namespace named `EO_KV` in the console.
+1.  Create a KV Namespace (any name, e.g., `Random`) in the console.
 2.  Bind it to `EO_KV` in Pages Settings -> **Functions Binding**.
-3.  Access `https://your-domain/admin/index.html` to manage settings online.
+3.  **First-time setup**: Access `https://your-domain/admin/index.html` and login with `ADMIN_PASSWORD` from Env Vars.
+4.  Save any configuration to activate KV mode.
+
+> **🔐 Hybrid Password**: The `ADMIN_PASSWORD` environment variable serves as a **permanent fallback**. Even if you set a new password in KV, the original Env password still works. This ensures account recovery.
 
 ---
 

@@ -66,9 +66,12 @@ npm run generate:manifest
 | `EO_PUBLIC_IMAGES` | String | `banner.jpg,logo.png` | **公开图片列表**，这些图片允许任何域名引用 |
 
 ### 方法 B: KV 存储 (读写可控模式)
-1.  在控制台创建 KV 命名空间，命名为 `EO_KV`。
+1.  在控制台创建 KV 命名空间（名称任意，如 `Random`）。
 2.  在 Pages 设置 -> **函数绑定** 中，将变量名 `EO_KV` 绑定到该命名空间。
-3.  访问管理后台 `https://您的域名/admin/index.html`，使用密码登录即可在线修改配置。
+3.  **首次初始化**：访问管理后台 `https://您的域名/admin/index.html`，使用环境变量 `ADMIN_PASSWORD` 登录。
+4.  在后台保存任意配置后，KV 即自动生效。
+
+> **🔐 混合密码机制**：环境变量 `ADMIN_PASSWORD` 作为**永久兜底密码**，即使 KV 中配置了新密码，原密码仍可登录。这确保您在忘记 KV 密码时仍能恢复访问。
 
 ---
 
